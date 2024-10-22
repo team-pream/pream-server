@@ -10,6 +10,8 @@
   npx prisma generate
   ```
 
+- `.env` 파일 추가
+
 - 개발 서버 실행
   ```bash
   pnpm start:dev
