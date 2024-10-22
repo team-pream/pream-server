@@ -24,12 +24,6 @@ async function bootstrap() {
       user: 'pream',
       password: 'preamureca',
     },
-    // tagGroups: [
-    //   {
-    //     name: 'Core resources',
-    //     tags: ['cats'],
-    //   },
-    // ],
   };
 
   await RedocModule.setup('/api', app, document, redocOptions);

@@ -100,7 +100,7 @@ export class AuthController {
   }
 
   @ApiOperation({
-    summary: 'Refresh 토큰 재발급 API',
+    summary: 'Access 토큰 재발급 API',
     description:
       'Access token 만료 시 Refresh token을 이용하여 새로운 Access token을 발급합니다.',
   })

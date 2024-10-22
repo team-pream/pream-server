@@ -67,7 +67,7 @@ model Pet {
   userId    String
   name      String
   image     String?
-  type      PetType
+  petType   PetType
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -75,11 +75,14 @@ model Pet {
 }
 
 model Category {
-  id   Int      @id @default(autoincrement())
-  name String
-  types PetType[]
+  id          Int      @id @default(autoincrement())
+  name        String
+  icon        String
+  petType     PetType[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  products Product[]
+  products    Product[]
 }
 
 model Product {
