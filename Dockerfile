@@ -10,6 +10,8 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
+RUN npx prisma generate
+
 RUN pnpm run build
 
 FROM node:20.17.0-alpine
