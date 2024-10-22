@@ -44,16 +44,16 @@ enum PaymentMethodType {
 }
 
 model User {
-  id           String   @id @default(uuid())
+  id           String         @id @default(uuid())
   provider     ProviderType?  
-  providerId   String?  
+  providerId   String?        @unique
   username     String
   refreshToken String? 
   phone        String?
   address      String?
   chattingLink String?  
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
   pets         Pet[]
   products     Product[]
