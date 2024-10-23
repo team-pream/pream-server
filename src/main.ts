@@ -11,6 +11,7 @@ async function bootstrap() {
     .setTitle('Pream API Docs')
     .setDescription('Pream API 문서입니다.')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
