@@ -24,6 +24,7 @@ import {
   UserResponseDto,
 } from '~/user/dto/user-response.dto';
 import { UserService } from '~/user/user.service';
+import { UserPetRequestDto } from './dto/pet-response.dto';
 
 @ApiTags('User')
 @Controller('user')
@@ -97,5 +98,37 @@ export class UserController {
     } else {
       throw new BadRequestException({ errorCode: -834 });
     }
+  }
+
+  @ApiOperation({
+    summary: '반려동물 프로필 등록 API',
+    description:
+      '<b>온보딩 2-3단계에서 사용되는 API</b>로, 반려동물 프로필(강아지/고양이, 이름)을 등록합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '반려동물 프로필 등록 성공',
+    example: {
+      id: 'bd0e0cc2-0f87-4616-98a8-eac196baed82',
+      userId: '718ca736-e63a-4311-9674-9932a61b707f',
+      name: '치즈',
+      image: null,
+      petType: 'CAT',
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: '이미 등록된 반려동물이 있는 경우',
+    example: { errorCode: -839 },
+  })
+  @ApiBody({ type: UserPetRequestDto })
+  @UseGuards(JwtAuthGuard)
+  @Post('/pet')
+  async updateOnboardingUserPet(
+    @Body() userPetRequestDto: UserPetRequestDto,
+    @Request() req,
+  ) {
+    const userId = req.user.id;
+    return this.userService.createUserPet(userId, userPetRequestDto);
   }
 }

@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '~/prisma/prisma.service';
 import { UpdateUserDto } from './dto/user-response.dto';
+import { UserPetRequestDto } from './dto/pet-response.dto';
 
 @Injectable()
 export class UserService {
@@ -94,5 +95,39 @@ export class UserService {
     });
 
     return !existingUser;
+  }
+
+  async createUserPet(userId: string, userPetRequestDto: UserPetRequestDto) {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!existingUser) {
+      throw new UnauthorizedException({ errorCode: -836 });
+    }
+
+    const existingPet = await this.prisma.pet.findUnique({
+      where: { userId },
+    });
+
+    if (existingPet) {
+      throw new BadRequestException({ errorCode: -839 });
+    }
+
+    const newPet = await this.prisma.pet.create({
+      data: {
+        userId,
+        name: userPetRequestDto.name,
+        petType: userPetRequestDto.petType,
+      },
+    });
+
+    return {
+      id: newPet.id,
+      userId: newPet.userId,
+      name: newPet.name,
+      image: newPet.image,
+      petType: newPet.petType,
+    };
   }
 }

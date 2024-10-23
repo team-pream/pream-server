@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString, Length } from 'class-validator';
 
 export class PetResponseDto {
   @ApiProperty({
@@ -29,6 +30,23 @@ export class PetResponseDto {
   @ApiProperty({
     example: 'DOG',
     description: '강아지/고양이',
+  })
+  petType: 'CAT' | 'DOG';
+}
+
+export class UserPetRequestDto {
+  @ApiProperty({
+    example: '두부',
+    description: '반려동물 이름 (최소 2자, 최대 20자)',
+  })
+  @IsString()
+  @Length(2, 20)
+  name: string;
+
+  @ApiProperty({
+    example: 'DOG',
+    description: '강아지/고양이',
+    enum: ['CAT', 'DOG'],
   })
   petType: 'CAT' | 'DOG';
 }
