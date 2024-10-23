@@ -36,11 +36,19 @@ export class AuthService {
   }
 
   async login(user: any) {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { id: user.id },
+    });
+
+    const needOnboarding =
+      !existingUser.nickname || !existingUser.phone || !existingUser.email;
+
     const accessTokenInfo = await this.generateAccessToken(user);
     const refreshTokenInfo = await this.generateRefreshToken(user);
     return {
       ...accessTokenInfo,
       ...refreshTokenInfo,
+      needOnboarding,
     };
   }
 

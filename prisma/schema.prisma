@@ -7,6 +7,93 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String        @id @default(uuid())
+  provider     ProviderType?
+  providerId   String?       @unique
+  username     String
+  nickname     String?       @unique
+  refreshToken String?
+  phone        String?
+  address      String?
+  email        String?       @unique
+  contact      String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  likes        Like[]
+  orders       Order[]
+  pets         Pet[]
+  products     Product[]
+}
+
+model Pet {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  name      String
+  image     String?
+  petType   PetType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String
+  icon      String
+  petType   PetType[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+}
+
+model Product {
+  id          Int               @id @default(autoincrement())
+  categoryId  Int
+  sellerId    String
+  name        String
+  price       Int
+  status      ProductStatusType
+  images      String[]
+  description String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  likes       Like[]
+  orders      Order[]
+  category    Category          @relation(fields: [categoryId], references: [id])
+  seller      User              @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id              Int               @id @default(autoincrement())
+  userId          String
+  status          OrderStatusType
+  paymentAmount   Int
+  paymentMethod   PaymentMethodType
+  shippingAddress String
+  phone           String
+  productId       Int
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  product         Product           @relation(fields: [productId], references: [id])
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, productId])
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  productId Int
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+}
+
 enum ProviderType {
   KAKAO
 }
@@ -23,110 +110,22 @@ enum ProductStatusType {
 }
 
 enum OrderStatusType {
-  PAYMENT_PENDING    // 결제대기
-  PAYMENT_COMPLETED  // 결제완료
-  PAYMENT_FAILED     // 결제실패
-  ORDER_CANCELED     // 주문취소
-  REFUND_REQUESTED   // 환불신청
-  REFUND_COMPLETED   // 환불완료
+  PAYMENT_PENDING
+  PAYMENT_COMPLETED
+  PAYMENT_FAILED
+  ORDER_CANCELED
+  REFUND_REQUESTED
+  REFUND_COMPLETED
 }
 
 enum PaymentMethodType {
-  CARD              // 카드
-  VIRTUAL_ACCOUNT    // 가상계좌
-  SIMPLE_PAYMENT     // 간편결제
-  MOBILE            // 휴대폰 결제
-  BANK_TRANSFER     // 계좌이체
-  CULTURE_GIFT_CARD // 문화상품권
-  BOOK_GIFT_CARD    // 도서문화상품권
-  GAME_GIFT_CARD    // 게임문화상품권
-  INTL_SIMPLE_PAYMENT // 해외간편결제
-}
-
-model User {
-  id           String         @id @default(uuid())
-  provider     ProviderType?  
-  providerId   String?        @unique
-  username     String
-  refreshToken String? 
-  phone        String?
-  address      String?
-  chattingLink String?  
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-
-  pets         Pet[]
-  products     Product[]
-  orders       Order[]
-  likes        Like[]
-}
-
-model Pet {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  name      String
-  image     String?
-  petType   PetType
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId])
-}
-
-model Category {
-  id          Int      @id @default(autoincrement())
-  name        String
-  icon        String
-  petType     PetType[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  products    Product[]
-}
-
-model Product {
-  id          Int        @id @default(autoincrement())
-  category    Category   @relation(fields: [categoryId], references: [id])
-  categoryId  Int
-  seller      User       @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  sellerId    String
-  name        String
-  price       Int
-  status      ProductStatusType
-  images      String[]  
-  description String?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-
-  orders      Order[]
-  likes       Like[]
-}
-
-model Order {
-  id              Int      @id @default(autoincrement())
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId          String
-  status          OrderStatusType
-  paymentAmount   Int
-  paymentMethod   PaymentMethodType
-  shippingAddress String
-  phone           String
-  product         Product  @relation(fields: [productId], references: [id])
-  productId       Int
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  @@index([userId, productId])
-}
-
-model Like {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId Int
-  createdAt DateTime @default(now())
-
-  @@unique([userId, productId])
+  CARD
+  VIRTUAL_ACCOUNT
+  SIMPLE_PAYMENT
+  MOBILE
+  BANK_TRANSFER
+  CULTURE_GIFT_CARD
+  BOOK_GIFT_CARD
+  GAME_GIFT_CARD
+  INTL_SIMPLE_PAYMENT
 }

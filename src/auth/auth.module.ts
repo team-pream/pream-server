@@ -4,7 +4,7 @@ import { AuthController } from '~/auth/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from '~/auth/jwt/jwt.strategy';
 import { JwtReIssueStrategy } from '~/auth/jwt/reissue.strategy';
-import { ReIssueAuthGuard } from '~/auth/jwt/reissue-auth.guard';
+import { ReissueAuthGuard } from '~/auth/jwt/reissue-auth.guard';
 import { KakaoStrategy } from '~/auth/kakao/kakao.strategy';
 import { KakaoAuthGuard } from '~/auth/kakao/kakao-auth.guard';
 import { PrismaService } from '~/prisma/prisma.service';
@@ -21,10 +21,11 @@ import { PrismaService } from '~/prisma/prisma.service';
     PrismaService,
     JwtStrategy,
     JwtReIssueStrategy,
-    ReIssueAuthGuard,
+    ReissueAuthGuard,
     KakaoStrategy,
     KakaoAuthGuard,
   ],
   controllers: [AuthController],
+  // exports: [JwtModule],
 })
 export class AuthModule {}
