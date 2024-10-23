@@ -92,6 +92,7 @@ export class AuthService {
         data: {
           username,
           provider: 'KAKAO',
+          providerId,
         },
       });
     }

@@ -5,17 +5,17 @@ import {
   UseGuards,
   Get,
   Res,
-  HttpStatus,
   Response,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '~/auth/auth.service';
-import { ReIssueAuthGuard } from '~/auth/jwt/reissue-auth.guard';
+import { ReissueAuthGuard } from '~/auth/jwt/reissue-auth.guard';
 import { KakaoAuthGuard } from '~/auth/kakao/kakao-auth.guard';
 import { KakaoUserData } from '~/auth/decorator/kakao-user.decorator';
 import { KakaoUserDataDTO } from '~/auth/dto/kakao-user.dto';
 import { Response as ExpressResponse } from 'express';
 import { JwtAuthGuard } from './jwt/jwt-auth.guard';
+import { JwtRequest } from './dto/jwt-payload.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -56,6 +56,7 @@ export class AuthController {
     @Res() res: ExpressResponse,
   ) {
     const { id, username } = userData;
+    console.log('userData', userData);
 
     const { accessToken, refreshToken } = await this.authService.login({
       id: id.toString(),
@@ -88,12 +89,12 @@ export class AuthController {
     },
   })
   @UseGuards(JwtAuthGuard)
-  @Post('status')
+  @Get('status')
   async getStatus(@Request() req: any, @Response() res: ExpressResponse) {
     const { user } = req;
 
     if (user) {
-      return res.sendStatus(HttpStatus.OK);
+      return res.sendStatus(200);
     }
 
     return res.send({ errorCode: -825 });
@@ -126,9 +127,9 @@ export class AuthController {
       },
     },
   })
-  @UseGuards(ReIssueAuthGuard)
+  @UseGuards(ReissueAuthGuard)
   @Post('reissue')
-  async reIssueAccessToken(@Request() req: any) {
+  async reIssueAccessToken(@Request() req: JwtRequest) {
     return this.authService.reIssueToken(req.user.refreshToken);
   }
 }
