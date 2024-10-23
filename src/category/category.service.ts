@@ -12,6 +12,9 @@ export class CategoryService {
         name: true,
         icon: true,
       },
+      orderBy: {
+        id: 'asc',
+      },
     });
   }
 }
