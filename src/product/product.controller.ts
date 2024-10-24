@@ -1,0 +1,64 @@
+import { Controller, Get, Query, Request, UseGuards } from '@nestjs/common';
+import {
+  ApiHeader,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { ProductService } from './product.service';
+import { ProductListResponseDto } from './dto/product.dto';
+import { JwtAuthGuard } from '~/auth/jwt/jwt-auth.guard';
+import { PRODUCT_STATUS, ProductStatusType } from './constants/product';
+
+@ApiTags('Product')
+@Controller('products')
+@UseGuards(JwtAuthGuard)
+export class ProductController {
+  constructor(private productService: ProductService) {}
+
+  @ApiOperation({
+    summary: '특정 카테고리 상품 리스트 조회',
+    description:
+      '특정 카테고리의 상품 목록을 조회합니다.<br/>상품 목록은 생성일(createdAt)값을 기준으로 내림차순(최신순) 정렬되어 반환됩니다.<br/>카테고리를 지정하지 않으면 전체 상품 목록이 반환됩니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {Access token}',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'category',
+    description: '카테고리 id',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'status',
+    description: '상품 상태<br/>AVAILABLE: 1, SOLD_OUT: 2, RESERVED: 3',
+    required: false,
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      '특정 카테고리의 상품 목록을 반환합니다.<br/>로그인하지 않은 사용자가 조회하는 경우, 각 상품의 isLiked 필드는 false로 반환됩니다.',
+    type: ProductListResponseDto,
+  })
+  @Get()
+  async getProducts(
+    @Query('category') category?: string,
+    @Query('status') status?: ProductStatusType,
+    @Request() req?: any,
+  ) {
+    const userId = req.user.id;
+
+    if (category) {
+      return this.productService.getProductsByCategory({
+        userId,
+        status: PRODUCT_STATUS[status],
+        categoryId: Number(category),
+      });
+    }
+
+    return this.productService.getAllProducts();
+  }
+}
