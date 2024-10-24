@@ -8,12 +8,12 @@ import {
 } from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { ProductListResponseDto } from './dto/product.dto';
-import { JwtAuthGuard } from '~/auth/jwt/jwt-auth.guard';
 import { PRODUCT_STATUS, ProductStatusType } from './constants/product';
+import { JwtOptionalAuthGuard } from '~/auth/jwt/jwt-optional-auth.guard';
 
 @ApiTags('Product')
 @Controller('products')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtOptionalAuthGuard)
 export class ProductController {
   constructor(private productService: ProductService) {}
 
@@ -49,7 +49,7 @@ export class ProductController {
     @Query('status') status?: ProductStatusType,
     @Request() req?: any,
   ) {
-    const userId = req.user.id;
+    const userId = req.user?.id;
 
     if (category) {
       return this.productService.getProductsByCategory({
