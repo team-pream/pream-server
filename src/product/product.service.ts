@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '~/prisma/prisma.service';
 import { ProductStatusType } from './constants/product';
 
@@ -73,6 +73,65 @@ export class ProductService {
         ...product,
         isLiked: likedProductIds.includes(product.id),
       })),
+    };
+  }
+
+  async getProductById({
+    productId,
+    userId,
+  }: {
+    productId: number;
+    userId: string;
+  }) {
+    const likedProductIds = userId ? await this.getLikedProductIds(userId) : [];
+
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        status: true,
+        condition: true,
+        images: true,
+        description: true,
+        createdAt: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        seller: {
+          select: {
+            id: true,
+            nickname: true,
+          },
+        },
+        _count: {
+          select: {
+            likes: true,
+          },
+        },
+      },
+    });
+
+    if (!product) {
+      throw new NotFoundException({ errorCode: -855 });
+    }
+
+    return {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      status: product.status,
+      images: product.images,
+      description: product.description,
+      createdAt: product.createdAt,
+      category: product.category,
+      seller: product.seller,
+      likesCount: product._count.likes,
+      isLiked: likedProductIds.includes(product.id),
     };
   }
 

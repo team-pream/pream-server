@@ -1,7 +1,16 @@
-import { Controller, Get, Query, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiHeader,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
@@ -10,6 +19,7 @@ import { ProductService } from './product.service';
 import { ProductListResponseDto } from './dto/product.dto';
 import { PRODUCT_STATUS, ProductStatusType } from './constants/product';
 import { JwtOptionalAuthGuard } from '~/auth/jwt/jwt-optional-auth.guard';
+import { ProductDetailDto } from './dto/product-detail.dto';
 
 @ApiTags('Product')
 @Controller('products')
@@ -60,5 +70,42 @@ export class ProductController {
     }
 
     return this.productService.getAllProducts();
+  }
+
+  @ApiOperation({
+    summary: '상품 상세 데이터 조회',
+    description: '특정 상품의 상세 정보를 조회합니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {Access token}',
+    required: false,
+  })
+  @ApiParam({
+    name: 'productId',
+    type: Number,
+    description: '상품 ID',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      '특정 상품의 상세 정보를 반환합니다.<br/>로그인하지 않은 사용자가 조회하는 경우, 각 상품의 isLiked 필드는 false로 반환됩니다.',
+    type: ProductDetailDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: '상품 ID가 잘못되었거나 존재하지 않는 경우',
+    example: { errorCode: -855 },
+  })
+  @Get(':productId')
+  async getProduct(
+    @Param('productId', ParseIntPipe) productId: number,
+    @Request() req?: any,
+  ) {
+    const userId = req.user?.id;
+    return await this.productService.getProductById({
+      productId,
+      userId,
+    });
   }
 }
