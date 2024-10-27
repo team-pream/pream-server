@@ -56,6 +56,7 @@ model Product {
   name        String
   price       Int
   status      ProductStatusType
+  condition   ProductConditionType
   images      String[]
   description String?
   createdAt   DateTime          @default(now())
@@ -107,6 +108,12 @@ enum ProductStatusType {
   AVAILABLE
   SOLD_OUT
   RESERVED
+}
+
+enum ProductConditionType {
+   NEW       // 새상품
+   SLIGHTLY_USED  // 사용감 적음
+   HEAVILY_USED   // 사용감 많음
 }
 
 enum OrderStatusType {

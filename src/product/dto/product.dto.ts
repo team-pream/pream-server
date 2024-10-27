@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+export enum ProductStatusType {
+  AVAILABLE = 'AVAILABLE',
+  SOLD_OUT = 'SOLD_OUT',
+  RESERVED = 'RESERVED',
+}
+
 export class ProductResponseDto {
   @ApiProperty({
     example: 1,
@@ -22,8 +28,9 @@ export class ProductResponseDto {
   @ApiProperty({
     example: 'AVAILABLE',
     description: '상품 상태',
+    enum: ProductStatusType,
   })
-  status: string;
+  status: ProductStatusType;
 
   @ApiProperty({
     example: [
