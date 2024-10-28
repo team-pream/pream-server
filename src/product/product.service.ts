@@ -89,7 +89,7 @@ export class ProductService {
       where: { id: productId },
       select: {
         id: true,
-        name: true,
+        title: true,
         price: true,
         status: true,
         condition: true,
@@ -122,7 +122,7 @@ export class ProductService {
 
     return {
       id: product.id,
-      name: product.name,
+      title: product.title,
       price: product.price,
       status: product.status,
       images: product.images,
