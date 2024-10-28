@@ -116,12 +116,6 @@ enum ProductConditionType {
    HEAVILY_USED  
 }
 
-enum ProductConditionType {
-   NEW       // 새상품
-   SLIGHTLY_USED  // 사용감 적음
-   HEAVILY_USED   // 사용감 많음
-}
-
 enum OrderStatusType {
   PAYMENT_PENDING
   PAYMENT_COMPLETED
