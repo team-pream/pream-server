@@ -5,7 +5,7 @@ export enum ProductStatusType {
   SOLD_OUT = 'SOLD_OUT',
 }
 
-export class ProductResponseDto {
+export class ProductsCurationDto {
   @ApiProperty({
     example: 1,
     description: '상품 ID',
@@ -42,41 +42,34 @@ export class ProductResponseDto {
   images: string[];
 
   @ApiProperty({
-    example: '올해 7월에 강아지랑 펜션 놀러갈 때 한번 사용한 카시트예요!!',
-    description: '상품 설명',
-  })
-  description: string;
-
-  @ApiProperty({
     example: 7,
     description: '카테고리 ID',
   })
   categoryId: number;
-
-  @ApiProperty({
-    example: '718ca736-e63a-4311-9674-9932a61b707f',
-    description: '판매자 ID',
-  })
-  sellerId: string;
-
-  @ApiProperty({
-    example: true,
-    description:
-      '로그인한 유저가 이 상품을 좋아요 했는지 여부 (로그인하지 않은 경우 false)',
-  })
-  isLiked: boolean;
 }
 
-export class ProductListResponseDto {
+export class GetProductsCurationResponseDto {
   @ApiProperty({
-    example: 1,
-    description: '총 상품 수',
+    type: [ProductsCurationDto],
+    description: '새로 등록된 상품 리스트',
   })
-  totalCount: number;
+  new: ProductsCurationDto[];
 
   @ApiProperty({
-    type: [ProductResponseDto],
-    description: '상품 리스트',
+    type: [ProductsCurationDto],
+    description: '이 상품은 어때요?',
   })
-  products: ProductResponseDto[];
+  random: ProductsCurationDto[];
+
+  @ApiProperty({
+    type: [ProductsCurationDto],
+    description: '판매가 1만원 이하 베스트',
+  })
+  cheap: ProductsCurationDto[];
+
+  @ApiProperty({
+    type: [ProductsCurationDto],
+    description: '실시간 인기 상품',
+  })
+  popular: ProductsCurationDto[];
 }

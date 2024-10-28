@@ -9,7 +9,6 @@ export enum ProductConditionType {
 export enum ProductStatusType {
   AVAILABLE = 'AVAILABLE',
   SOLD_OUT = 'SOLD_OUT',
-  RESERVED = 'RESERVED',
 }
 
 export class CategoryDto {
@@ -38,7 +37,7 @@ export class ProductDetailDto {
   @ApiProperty({ example: 70000 })
   price: number;
 
-  @ApiProperty({ example: 'RESERVED', enum: ProductStatusType })
+  @ApiProperty({ example: 'AVAILABLE', enum: ProductStatusType })
   status: ProductStatusType;
 
   @ApiProperty({ example: 'SLIGHTLY_USED', enum: ProductConditionType })
