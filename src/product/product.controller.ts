@@ -20,12 +20,27 @@ import { ProductListResponseDto } from './dto/product.dto';
 import { PRODUCT_STATUS, ProductStatusType } from './constants/product';
 import { JwtOptionalAuthGuard } from '~/auth/jwt/jwt-optional-auth.guard';
 import { ProductDetailDto } from './dto/product-detail.dto';
+import { GetProductsCurationResponseDto } from './dto/curated-product.dto';
 
 @ApiTags('Product')
 @Controller('products')
 @UseGuards(JwtOptionalAuthGuard)
 export class ProductController {
   constructor(private productService: ProductService) {}
+
+  @ApiOperation({
+    summary: '메인 페이지 상품 리스트 조회',
+    description: '메인 페이지 상품 리스트를 조회합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '큐레이션 된 상품 목록을 반환합니다.',
+    type: GetProductsCurationResponseDto,
+  })
+  @Get('curation')
+  async getProductsCuration() {
+    return await this.productService.getProductsCuration();
+  }
 
   @ApiOperation({
     summary: '특정 카테고리 상품 리스트 조회',
@@ -44,7 +59,7 @@ export class ProductController {
   })
   @ApiQuery({
     name: 'status',
-    description: '상품 상태<br/>AVAILABLE: 1, SOLD_OUT: 2, RESERVED: 3',
+    description: '상품 상태<br/>AVAILABLE: 1, SOLD_OUT: 2',
     required: false,
   })
   @ApiResponse({

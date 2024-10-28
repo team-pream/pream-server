@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '~/prisma/prisma.service';
 import { ProductStatusType } from './constants/product';
+import { Product } from '@prisma/client';
 
 @Injectable()
 export class ProductService {
@@ -135,11 +136,79 @@ export class ProductService {
     };
   }
 
+  async getProductsCuration() {
+    const newProducts = await this.prisma.product.findMany({
+      select: {
+        id: true,
+        title: true,
+        price: true,
+        status: true,
+        images: true,
+        categoryId: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 10,
+    });
+
+    const randomProducts = await this.getRandomProducts(10);
+
+    const cheapProductIds = [
+      289947809, 292952649, 137879392, 293104651, 267398757, 149716292,
+    ];
+
+    const cheapProducts = await this.prisma.product.findMany({
+      where: { id: { in: cheapProductIds } },
+      select: {
+        id: true,
+        title: true,
+        price: true,
+        status: true,
+        images: true,
+        categoryId: true,
+      },
+    });
+
+    const popularProductIds = [
+      295848682, 294321046, 232232085, 292242428, 295838320, 223291642,
+      293094076, 254440095, 295925329, 206069835, 259941454,
+    ];
+
+    const popularProducts = await this.prisma.product.findMany({
+      where: { id: { in: popularProductIds } },
+      select: {
+        id: true,
+        title: true,
+        price: true,
+        status: true,
+        images: true,
+        categoryId: true,
+      },
+    });
+
+    return {
+      new: newProducts,
+      random: randomProducts,
+      cheap: cheapProducts,
+      popular: popularProducts,
+    };
+  }
+
   private async getLikedProductIds(userId: string): Promise<number[]> {
     const likedProducts = await this.prisma.like.findMany({
       where: { userId },
       select: { productId: true },
     });
     return likedProducts.map((like) => like.productId);
+  }
+
+  private async getRandomProducts(limit: number = 10): Promise<Product[]> {
+    return this.prisma.$queryRaw`
+      SELECT id, title, price, status, images, 'categoryId'
+      FROM "Product"
+      ORDER BY RANDOM()
+      LIMIT ${limit}
+    `;
   }
 }
