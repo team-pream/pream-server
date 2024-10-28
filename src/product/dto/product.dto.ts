@@ -17,7 +17,7 @@ export class ProductResponseDto {
     example: '1번 사용한 강아지 카시트예요!',
     description: '상품 이름',
   })
-  name: string;
+  title: string;
 
   @ApiProperty({
     example: 40000,
