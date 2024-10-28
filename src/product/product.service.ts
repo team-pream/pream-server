@@ -12,7 +12,7 @@ export class ProductService {
     const products = await this.prisma.product.findMany({
       select: {
         id: true,
-        name: true,
+        title: true,
         price: true,
         status: true,
         images: true,
@@ -54,7 +54,7 @@ export class ProductService {
       where: whereConditions,
       select: {
         id: true,
-        name: true,
+        title: true,
         price: true,
         status: true,
         images: true,
