@@ -6,7 +6,7 @@ export enum ProductStatusType {
   SOLD_OUT = 'SOLD_OUT',
 }
 
-export class ProductResponseDto {
+export class SalesListProductResponseDto {
   @ApiProperty({
     example: 1,
     description: '상품 ID',
@@ -27,7 +27,7 @@ export class ProductResponseDto {
 
   @ApiProperty({
     example: 'AVAILABLE',
-    description: '상품 상태',
+    description: '상품 품절/예약/구매가능 상태',
     enum: ProductStatusType,
   })
   status: ProductStatusType;
@@ -41,43 +41,4 @@ export class ProductResponseDto {
     description: '상품 이미지 URL 리스트',
   })
   images: string[];
-
-  @ApiProperty({
-    example: '올해 7월에 강아지랑 펜션 놀러갈 때 한번 사용한 카시트예요!!',
-    description: '상품 설명',
-  })
-  description: string;
-
-  @ApiProperty({
-    example: 7,
-    description: '카테고리 ID',
-  })
-  categoryId: number;
-
-  @ApiProperty({
-    example: '718ca736-e63a-4311-9674-9932a61b707f',
-    description: '판매자 ID',
-  })
-  sellerId: string;
-
-  @ApiProperty({
-    example: true,
-    description:
-      '로그인한 유저가 이 상품을 좋아요 했는지 여부 (로그인하지 않은 경우 false)',
-  })
-  isLiked: boolean;
-}
-
-export class ProductListResponseDto {
-  @ApiProperty({
-    example: 1,
-    description: '총 상품 수',
-  })
-  totalCount: number;
-
-  @ApiProperty({
-    type: [ProductResponseDto],
-    description: '상품 리스트',
-  })
-  products: ProductResponseDto[];
 }

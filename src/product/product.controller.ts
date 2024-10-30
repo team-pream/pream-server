@@ -5,6 +5,7 @@ import {
   ParseIntPipe,
   Query,
   Request,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -21,6 +22,8 @@ import { PRODUCT_STATUS, ProductStatusType } from './constants/product';
 import { JwtOptionalAuthGuard } from '~/auth/jwt/jwt-optional-auth.guard';
 import { ProductDetailDto } from './dto/product-detail.dto';
 import { GetProductsCurationResponseDto } from './dto/curated-product.dto';
+import { JwtAuthGuard } from '~/auth/jwt/jwt-auth.guard';
+import { SalesListProductResponseDto } from './dto/sales-list-product.dto';
 
 @ApiTags('Product')
 @Controller('products')
@@ -85,6 +88,57 @@ export class ProductController {
     }
 
     return this.productService.getAllProducts();
+  }
+
+  @ApiOperation({
+    summary: '판매 내역 조회',
+    description: '사용자의 판매 등록 내역을 조회합니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {Access token}',
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      '판매하기 위해 등록한 상품의 내역을 조회합니다.<br/>상품 목록은 생성일(createdAt)값을 기준으로 내림차순(최신순) 정렬되어 반환됩니다.',
+    type: SalesListProductResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: '유효하지 않은 사용자 - Access token이 유효하지 않거나 만료됨',
+    content: {
+      'application/json': {
+        example: {
+          errorCode: -825,
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: '유효하지 않은 사용자 - Authorization 헤더가 없는 경우',
+    content: {
+      'application/json': {
+        example: {
+          errorCode: -954,
+        },
+      },
+    },
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('sales-list')
+  async getProductsSalesHistory(@Request() req?: any) {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      throw new UnauthorizedException({ errorCode: -825 });
+    }
+
+    return await this.productService.getProductsBySellerId({
+      userId,
+    });
   }
 
   @ApiOperation({

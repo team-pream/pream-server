@@ -195,6 +195,23 @@ export class ProductService {
     };
   }
 
+  async getProductsBySellerId({ userId }: { userId: string }) {
+    return this.prisma.product.findMany({
+      where: { sellerId: userId },
+      select: {
+        id: true,
+        title: true,
+        price: true,
+        status: true,
+        images: true,
+        createdAt: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
   private async getLikedProductIds(userId: string): Promise<number[]> {
     const likedProducts = await this.prisma.like.findMany({
       where: { userId },
