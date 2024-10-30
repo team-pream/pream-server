@@ -12,11 +12,11 @@ export class PostProductsUploadDto {
 
   @IsInt()
   @IsNotEmpty()
-  price: number;
+  price: string;
 
   @IsInt()
   @IsNotEmpty()
-  categoryId: number;
+  categoryId: string;
 
   @IsString()
   @IsNotEmpty()

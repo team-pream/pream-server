@@ -202,14 +202,14 @@ export class ProductController {
   @UseInterceptors(FilesInterceptor('images'))
   async postProductsUpload(
     @Body() postProductsUploadDto: PostProductsUploadDto,
-    @UploadedFiles() files: Express.Multer.File[],
+    @UploadedFiles() images: Express.Multer.File[],
     @Request() req: any,
   ) {
     const userId = req.user.id;
     return await this.productService.postProductsUpload({
       userId,
       postProductsUploadDto,
-      files,
+      images,
     });
   }
 }

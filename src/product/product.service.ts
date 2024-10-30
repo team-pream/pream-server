@@ -237,18 +237,18 @@ export class ProductService {
   async postProductsUpload({
     userId,
     postProductsUploadDto,
-    files,
+    images,
   }: {
     userId: string;
     postProductsUploadDto: PostProductsUploadDto;
-    files: Express.Multer.File[];
+    images: Express.Multer.File[];
   }) {
     const { condition, price, categoryId, title, description, contact } =
       postProductsUploadDto;
 
     const imageUrls = await Promise.all(
-      files.map((file) =>
-        this.awsService.uploadFile(file, process.env.AWS_S3_BUCKET_NAME),
+      images.map((image) =>
+        this.awsService.uploadFile(image, process.env.AWS_S3_BUCKET_NAME),
       ),
     );
 
@@ -262,8 +262,8 @@ export class ProductService {
         sellerId: userId,
         images: imageUrls,
         condition,
-        price,
-        categoryId,
+        price: Number(price),
+        categoryId: Number(categoryId),
         title,
         description,
         status: 'AVAILABLE',
