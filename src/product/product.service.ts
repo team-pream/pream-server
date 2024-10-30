@@ -2,10 +2,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '~/prisma/prisma.service';
 import { ProductStatusType } from './constants/product';
 import { Product } from '@prisma/client';
+import { PostProductsUploadDto } from './dto/post-products-upload.dto';
+import { AwsService } from '~/aws/aws.service';
 
 @Injectable()
 export class ProductService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private awsService: AwsService,
+  ) {}
 
   async getAllProducts(userId?: string) {
     const likedProductIds = userId ? await this.getLikedProductIds(userId) : [];
@@ -227,5 +232,46 @@ export class ProductService {
       ORDER BY RANDOM()
       LIMIT ${limit}
     `;
+  }
+
+  async postProductsUpload({
+    userId,
+    postProductsUploadDto,
+    images,
+  }: {
+    userId: string;
+    postProductsUploadDto: PostProductsUploadDto;
+    images: Express.Multer.File[];
+  }) {
+    const { condition, price, categoryId, title, description, contact } =
+      postProductsUploadDto;
+
+    const imageUrls = await Promise.all(
+      images.map((image) =>
+        this.awsService.uploadFile(image, process.env.AWS_S3_BUCKET_NAME),
+      ),
+    );
+
+    try {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { contact },
+      });
+
+      return this.prisma.product.create({
+        data: {
+          sellerId: userId,
+          images: imageUrls,
+          condition,
+          price: Number(price),
+          categoryId: Number(categoryId),
+          title,
+          description,
+          status: 'AVAILABLE',
+        },
+      });
+    } catch {
+      throw new Error('상품 등록에 실패했습니다.');
+    }
   }
 }

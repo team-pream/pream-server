@@ -1,12 +1,16 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   Get,
   Param,
   ParseIntPipe,
+  Post,
   Query,
   Request,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiHeader,
@@ -24,6 +28,8 @@ import { ProductDetailDto } from './dto/product-detail.dto';
 import { GetProductsCurationResponseDto } from './dto/curated-product.dto';
 import { JwtAuthGuard } from '~/auth/jwt/jwt-auth.guard';
 import { SalesListProductResponseDto } from './dto/sales-list-product.dto';
+import { PostProductsUploadDto } from './dto/post-products-upload.dto';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Product')
 @Controller('products')
@@ -175,6 +181,31 @@ export class ProductController {
     return await this.productService.getProductById({
       productId,
       userId,
+    });
+  }
+
+  @ApiOperation({
+    summary: '판매 등록',
+    description: '상품을 판매하기 위한 정보를 등록합니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {Access token}',
+    required: true,
+  })
+  @UseGuards(JwtAuthGuard)
+  @Post('upload')
+  @UseInterceptors(FilesInterceptor('images'))
+  async postProductsUpload(
+    @Body() postProductsUploadDto: PostProductsUploadDto,
+    @UploadedFiles() images: Express.Multer.File[],
+    @Request() req: any,
+  ) {
+    const userId = req.user.id;
+    return await this.productService.postProductsUpload({
+      userId,
+      postProductsUploadDto,
+      images,
     });
   }
 }

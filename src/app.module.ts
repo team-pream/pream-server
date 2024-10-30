@@ -6,6 +6,7 @@ import { CategoryModule } from '~/category/category.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { ProductModule } from './product/product.module';
+import { AwsModule } from './aws/aws.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ProductModule } from './product/product.module';
     CategoryModule,
     UserModule,
     ProductModule,
+    AwsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
