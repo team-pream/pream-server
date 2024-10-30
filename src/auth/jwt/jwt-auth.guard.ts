@@ -37,8 +37,7 @@ export class JwtAuthGuard implements CanActivate {
       });
       request.user = { id: decoded.sub };
       return true;
-    } catch (error) {
-      console.log(error);
+    } catch {
       throw new HttpException({ errorCode: -825 }, HttpStatus.UNAUTHORIZED);
     }
   }

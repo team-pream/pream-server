@@ -252,22 +252,26 @@ export class ProductService {
       ),
     );
 
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { contact },
-    });
+    try {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { contact },
+      });
 
-    return this.prisma.product.create({
-      data: {
-        sellerId: userId,
-        images: imageUrls,
-        condition,
-        price: Number(price),
-        categoryId: Number(categoryId),
-        title,
-        description,
-        status: 'AVAILABLE',
-      },
-    });
+      return this.prisma.product.create({
+        data: {
+          sellerId: userId,
+          images: imageUrls,
+          condition,
+          price: Number(price),
+          categoryId: Number(categoryId),
+          title,
+          description,
+          status: 'AVAILABLE',
+        },
+      });
+    } catch {
+      throw new Error('상품 등록에 실패했습니다.');
+    }
   }
 }

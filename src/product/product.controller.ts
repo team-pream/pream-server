@@ -185,17 +185,13 @@ export class ProductController {
   }
 
   @ApiOperation({
-    summary: '상품 판매 api',
-    description: '상품 판매 정보 등록',
+    summary: '판매 등록',
+    description: '상품을 판매하기 위한 정보를 등록합니다.',
   })
   @ApiHeader({
     name: 'Authorization',
     description: 'Bearer {Access token}',
     required: true,
-  })
-  @ApiResponse({
-    status: 200,
-    type: PostProductsUploadDto,
   })
   @UseGuards(JwtAuthGuard)
   @Post('upload')
