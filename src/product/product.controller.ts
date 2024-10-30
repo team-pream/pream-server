@@ -1,11 +1,11 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   Param,
   ParseIntPipe,
   Query,
   Request,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -103,10 +103,10 @@ export class ProductController {
     status: 200,
     description:
       '판매하기 위해 등록한 상품의 내역을 조회합니다.<br/>상품 목록은 생성일(createdAt)값을 기준으로 내림차순(최신순) 정렬되어 반환됩니다.',
-    type: SalesListProductResponseDto,
+    type: [SalesListProductResponseDto],
   })
   @ApiResponse({
-    status: 401,
+    status: 404,
     description: '유효하지 않은 사용자 - Access token이 유효하지 않거나 만료됨',
     content: {
       'application/json': {
@@ -117,7 +117,7 @@ export class ProductController {
     },
   })
   @ApiResponse({
-    status: 401,
+    status: 400,
     description: '유효하지 않은 사용자 - Authorization 헤더가 없는 경우',
     content: {
       'application/json': {
@@ -133,7 +133,7 @@ export class ProductController {
     const userId = req.user?.id;
 
     if (!userId) {
-      throw new UnauthorizedException({ errorCode: -825 });
+      throw new BadRequestException({ errorCode: -825 });
     }
 
     return await this.productService.getProductsBySellerId({
