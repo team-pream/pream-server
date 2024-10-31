@@ -16,8 +16,12 @@ export class AwsService {
     });
   }
 
-  async uploadFile(file: Express.Multer.File, bucket: string): Promise<string> {
-    const key = `${uuid()}-${file.originalname}`;
+  async uploadFile(
+    file: Express.Multer.File,
+    bucket: string,
+    folder: string,
+  ): Promise<string> {
+    const key = `${folder}/${uuid()}-${file?.originalname ?? ''}`;
     const command = new PutObjectCommand({
       Bucket: bucket,
       Key: key,

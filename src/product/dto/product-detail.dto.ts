@@ -32,7 +32,7 @@ export class ProductDetailDto {
   id: number;
 
   @ApiProperty({ example: '고양이를 위한 철제 캣휠 팝니다!' })
-  name: string;
+  title: string;
 
   @ApiProperty({ example: 70000 })
   price: number;

@@ -248,7 +248,11 @@ export class ProductService {
 
     const imageUrls = await Promise.all(
       images.map((image) =>
-        this.awsService.uploadFile(image, process.env.AWS_S3_BUCKET_NAME),
+        this.awsService.uploadFile(
+          image,
+          process.env.AWS_S3_BUCKET_NAME,
+          'product-images',
+        ),
       ),
     );
 

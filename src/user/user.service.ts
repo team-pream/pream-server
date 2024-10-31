@@ -6,10 +6,15 @@ import {
 import { PrismaService } from '~/prisma/prisma.service';
 import { UpdateUserDto } from './dto/user-response.dto';
 import { UserPetRequestDto } from './dto/pet-response.dto';
+import { AwsService } from '~/aws/aws.service';
+import { PatchProfileRequestDto } from './dto/patch-profile.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private awsService: AwsService,
+  ) {}
 
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
     const existingUser = await this.prisma.user.findUnique({ where: { id } });
@@ -128,6 +133,51 @@ export class UserService {
       name: newPet.name,
       image: newPet.image,
       petType: newPet.petType,
+    };
+  }
+
+  async updateUserProfile({
+    userId,
+    data,
+    image,
+  }: {
+    userId: string;
+    data: PatchProfileRequestDto;
+    image?: Express.Multer.File;
+  }) {
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { nickname: data.nickname },
+    });
+
+    let imageUrl = null;
+
+    if (image) {
+      imageUrl = await this.awsService.uploadFile(
+        image,
+        process.env.AWS_S3_BUCKET_NAME,
+        'profile-images',
+      );
+    }
+
+    const updatedPet = await this.prisma.pet.update({
+      where: { userId },
+      data: {
+        name: data.petName,
+        petType: data.petType,
+        ...(imageUrl !== null ? { image: imageUrl } : {}),
+      },
+    });
+
+    return {
+      id: updatedUser.id,
+      username: updatedUser.username,
+      nickname: updatedUser.nickname,
+      phone: updatedUser.phone,
+      address: updatedUser.address,
+      email: updatedUser.email,
+      contact: updatedUser.contact,
+      pet: updatedPet,
     };
   }
 }
