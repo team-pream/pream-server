@@ -7,10 +7,13 @@ import {
   Post,
   Request,
   Response,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBody,
+  ApiConsumes,
   ApiHeader,
   ApiOperation,
   ApiResponse,
@@ -25,6 +28,7 @@ import {
 } from '~/user/dto/user-response.dto';
 import { UserService } from '~/user/user.service';
 import { UserPetRequestDto } from './dto/pet-response.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('User')
 @Controller('user')
@@ -130,5 +134,47 @@ export class UserController {
   ) {
     const userId = req.user.id;
     return this.userService.createUserPet(userId, userPetRequestDto);
+  }
+
+  @ApiOperation({
+    summary: '프로필 수정 API',
+    description: '마이페이지에서 사용자와 반려동물 정보를 수정합니다.',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description:
+      '<b>변경되지 않은 필드의 값들도 모두 포함해서 보내야 합니다.</b>',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '프로필 수정 성공',
+    example: UserResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: '프로필 수정 실패',
+    example: {
+      errorCode: -840,
+    },
+  })
+  @UseGuards(JwtAuthGuard)
+  @Patch('profile')
+  @UseInterceptors(FileInterceptor('image'))
+  async patchUserProfileEdit(
+    @Body() patchProfileRequestDto: any,
+    @Request() req,
+    @UploadedFile() image?: Express.Multer.File,
+  ) {
+    const userId = req.user.id;
+
+    try {
+      return this.userService.updateUserProfile({
+        userId,
+        data: patchProfileRequestDto,
+        image,
+      });
+    } catch {
+      throw new BadRequestException({ errorCode: -840 });
+    }
   }
 }
