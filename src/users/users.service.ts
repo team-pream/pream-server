@@ -169,7 +169,7 @@ export class UsersService {
         where: { userId },
       });
       return {
-        type: 'toast',
+        // type: 'toast',
         message: '반려동물 프로필이 삭제되었습니다.',
       };
     } catch {

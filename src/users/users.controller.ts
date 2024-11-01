@@ -36,6 +36,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 @ApiHeader({
   name: 'Authorization',
   description: 'Bearer {Access token}',
+  required: true,
 })
 @UseGuards(JwtAuthGuard)
 @Controller('users')
@@ -45,11 +46,6 @@ export class UsersController {
   @ApiOperation({
     summary: '사용자 & 반려동물 프로필 조회',
     description: '사용자 프로필과 반려동물 프로필을 <b>함께</b> 조회합니다.',
-  })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer {Access token}',
-    required: true,
   })
   @ApiResponse({
     status: 200,
@@ -70,11 +66,6 @@ export class UsersController {
     summary: '사용자 프로필 수정',
     description:
       '사용자 프로필의 닉네임, 휴대폰번호, 판매정산계죄를 수정합니다.<br/>수정하려는 항목만 선택적으로 전달할 수 있습니다.',
-  })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer {Access token}',
-    required: true,
   })
   @ApiBody({
     type: PatchMeRequestDto,
@@ -108,11 +99,6 @@ export class UsersController {
     description: '등록된 반려동물 프로필이 없는 경우 새롭게 등록합니다.',
   })
   @ApiConsumes('multipart/form-data')
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer {Access token}',
-    required: true,
-  })
   @ApiBody({
     type: PostPetRequestDto,
   })
@@ -152,11 +138,6 @@ export class UsersController {
     description: '반려동물 프로필이 있는 경우 기존 데이터를 수정합니다.',
   })
   @ApiConsumes('multipart/form-data')
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer {Access token}',
-    required: true,
-  })
   @ApiBody({
     type: PatchPetRequestDto,
   })
@@ -185,16 +166,11 @@ export class UsersController {
     summary: '반려동물 프로필 삭제',
     description: '반려동물 프로필이 있는 경우 기존 데이터를 삭제합니다.',
   })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer {Access token}',
-    required: true,
-  })
   @ApiResponse({
     status: 200,
     description: '반려동물 프로필 삭제 성공',
     example: {
-      type: 'toast',
+      // type: 'toast',
       message: '반려동물 프로필이 삭제되었습니다.',
     },
   })

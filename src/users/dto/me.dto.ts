@@ -68,7 +68,7 @@ export class PatchMeRequestDto {
   @ApiProperty({
     example: '두부 집사',
     description: '사용자 닉네임 (최소 2자, 최대 20자)',
-    nullable: true,
+    required: false,
   })
   @IsString()
   @Length(2, 20)
@@ -77,6 +77,7 @@ export class PatchMeRequestDto {
   @ApiProperty({
     example: '010-0000-0000',
     description: '사용자 전화번호',
+    required: false,
   })
   @IsPhoneNumber('KR')
   phone: string;
@@ -84,6 +85,7 @@ export class PatchMeRequestDto {
   @ApiProperty({
     example: '서울시 강남구 선릉로',
     description: '사용자 주소',
+    required: false,
   })
   @IsString()
   address: string;

@@ -97,7 +97,7 @@ export class PatchPetResponseDto {
     example: '2021-08-26T07:00:00.000Z',
     description: '수정일자',
   })
-  createdAt: Date;
+  updatedAt: Date;
 }
 
 export class PostPetRequestDto {
@@ -131,6 +131,7 @@ export class PatchPetRequestDto {
   @ApiProperty({
     example: '두부',
     description: '반려동물 이름 (최소 2자, 최대 20자)',
+    required: false,
   })
   @IsString()
   @Length(2, 20)
@@ -140,6 +141,7 @@ export class PatchPetRequestDto {
     example:
       'https://github.com/user-attachments/assets/7e39f737-822e-4b85-90e2-ec8c1e96fd40',
     description: '프로필 이미지 URL',
+    required: false,
   })
   image: string;
 
@@ -147,6 +149,7 @@ export class PatchPetRequestDto {
     example: 'DOG',
     description: '강아지/고양이',
     enum: ['CAT', 'DOG'],
+    required: false,
   })
   petType: 'CAT' | 'DOG';
 }
