@@ -81,6 +81,13 @@ export class UserService {
         address: profile.address,
         email: profile.email,
         contact: profile.contact,
+        pet: {
+          id: profile.pet.id,
+          userId: profile.pet.userId,
+          name: profile.pet.name,
+          image: profile.pet.image,
+          petType: profile.pet.petType,
+        },
       };
     } else {
       throw new UnauthorizedException({ errorCode: -836 });

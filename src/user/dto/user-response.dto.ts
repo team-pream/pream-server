@@ -73,8 +73,6 @@ export class UserResponseDto {
       image:
         'https://github.com/user-attachments/assets/7e39f737-822e-4b85-90e2-ec8c1e96fd40',
       petType: 'DOG',
-      createdAt: '2024-10-23T06:27:21.384Z',
-      updatedAt: '2024-10-23T06:26:53.552Z',
     },
     description: '등록한 반려동물 리스트',
   })
