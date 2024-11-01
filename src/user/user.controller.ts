@@ -31,7 +31,7 @@ import { UserPetRequestDto } from './dto/pet-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('User')
-@Controller('users')
+@Controller('user')
 @ApiHeader({
   name: 'Authorization',
   description: 'Bearer {Access token}',

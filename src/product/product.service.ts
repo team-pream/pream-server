@@ -280,7 +280,6 @@ export class ProductService {
   }
 
   async searchProducts(keyword: string) {
-    console.log('keyword', keyword);
     return this.prisma.product.findMany({
       where: {
         title: { contains: keyword },
