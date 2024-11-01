@@ -55,7 +55,7 @@ export class UserController {
     example: { errorCode: -836 },
   })
   @UseGuards(JwtAuthGuard)
-  @Get('/profile')
+  @Get('/me')
   async getUser(@Request() req: JwtRequest) {
     return this.userService.getUser(req.user.id);
   }

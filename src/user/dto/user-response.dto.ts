@@ -66,22 +66,19 @@ export class UserResponseDto {
   contact: string | null;
 
   @ApiProperty({
-    example: [
-      {
-        id: '57afd458-23ce-4dfb-8547-4d2904853cb4',
-        userId: '3998b589-8f71-45bc-9c4b-acedf545b117',
-        name: '두부',
-        image:
-          'https://github.com/user-attachments/assets/7e39f737-822e-4b85-90e2-ec8c1e96fd40',
-        petType: 'DOG',
-        createdAt: '2024-10-23T06:27:21.384Z',
-        updatedAt: '2024-10-23T06:26:53.552Z',
-      },
-    ],
-    isArray: true,
+    example: {
+      id: '57afd458-23ce-4dfb-8547-4d2904853cb4',
+      userId: '3998b589-8f71-45bc-9c4b-acedf545b117',
+      name: '두부',
+      image:
+        'https://github.com/user-attachments/assets/7e39f737-822e-4b85-90e2-ec8c1e96fd40',
+      petType: 'DOG',
+      createdAt: '2024-10-23T06:27:21.384Z',
+      updatedAt: '2024-10-23T06:26:53.552Z',
+    },
     description: '등록한 반려동물 리스트',
   })
-  pets: PetResponseDto[];
+  pet: PetResponseDto;
 }
 
 export class OnboardingUserDto {

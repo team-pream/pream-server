@@ -16,14 +16,15 @@ model User {
   nickname     String?       @unique
   refreshToken String?
   phone        String?
-  address      String?
+  address      Json?
   email        String?       @unique
   contact      String?
+  bankAccount  Json?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   likes        Like[]
   orders       Order[]
-  pets         Pet[]
+  pet          Pet?
   products     Product[]
 }
 

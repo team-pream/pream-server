@@ -131,6 +131,7 @@ export class ProductService {
       title: product.title,
       price: product.price,
       status: product.status,
+      condition: product.condition,
       images: product.images,
       description: product.description,
       createdAt: product.createdAt,
@@ -277,5 +278,26 @@ export class ProductService {
     } catch {
       throw new Error('상품 등록에 실패했습니다.');
     }
+  }
+
+  async searchProducts(keyword: string) {
+    return this.prisma.product.findMany({
+      where: {
+        title: { contains: keyword },
+      },
+      select: {
+        id: true,
+        title: true,
+        price: true,
+        status: true,
+        images: true,
+        description: true,
+        categoryId: true,
+        sellerId: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 }

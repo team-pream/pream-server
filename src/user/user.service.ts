@@ -68,7 +68,7 @@ export class UserService {
     const profile = await this.prisma.user.findUnique({
       where: { id },
       include: {
-        pets: true,
+        pet: true,
       },
     });
 
@@ -81,13 +81,6 @@ export class UserService {
         address: profile.address,
         email: profile.email,
         contact: profile.contact,
-        pets: profile.pets.map((pet) => ({
-          id: pet.id,
-          userId: pet.userId,
-          name: pet.name,
-          imageURL: pet.image,
-          petType: pet.petType,
-        })),
       };
     } else {
       throw new UnauthorizedException({ errorCode: -836 });
