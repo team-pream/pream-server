@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Patch,
+  Post,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -12,6 +14,8 @@ import { JwtAuthGuard } from '~/auth/jwt/jwt-auth.guard';
 import { UsersService } from './users.service';
 import { GetProfileResponseDto } from './dto/profile.dto';
 import { PatchMeResponseDto } from './dto/me.dto';
+import { PetType } from '@prisma/client';
+import { PatchPetResponseDto, PostPetResponseDto } from './dto/pet.dto';
 
 @ApiTags('Users')
 @ApiHeader({
@@ -39,8 +43,8 @@ export class UsersController {
   })
   @ApiResponse({
     status: 401,
-    description: '유효하지 않은 사용자',
-    example: { errorCode: -836 },
+    description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
+    example: { errorCode: -825 },
   })
   @Get('profile')
   async getUser(@Request() req: JwtRequest) {
@@ -79,5 +83,99 @@ export class UsersController {
   ) {
     const userId = req.user?.id;
     return this.usersService.patchUsersMe(userId, updateData);
+  }
+
+  @ApiOperation({
+    summary: '반려동물 프로필 등록',
+    description: '등록된 반려동물 프로필이 없는 경우 새롭게 등록합니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {Access token}',
+    required: true,
+  })
+  @ApiResponse({
+    status: 201,
+    description: '반려동물 프로필 등록 성공',
+    type: PostPetResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
+    example: { errorCode: -825 },
+  })
+  @ApiResponse({
+    status: 400,
+    description: '필수 항목이 누락된 경우',
+    example: { errorCode: -843 },
+  })
+  @ApiResponse({
+    status: 409,
+    description: '이미 등록된 반려동물이 있는 경우',
+    example: { errorCode: -842 },
+  })
+  @Post('pet')
+  async postUsersPet(
+    @Body() body: { name: string; image?: string; petType: PetType },
+    @Request() req: JwtRequest,
+  ) {
+    const userId = req.user?.id;
+    return this.usersService.postUsersPet(userId, body);
+  }
+
+  @ApiOperation({
+    summary: '반려동물 프로필 수정',
+    description: '반려동물 프로필이 있는 경우 기존 데이터를 수정합니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {Access token}',
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '반려동물 프로필 수정 성공',
+    type: PatchPetResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
+    example: { errorCode: -825 },
+  })
+  @Patch('pet')
+  async getPetProfile(
+    @Body() body: { name: string; image?: string; petType: PetType },
+    @Request() req: JwtRequest,
+  ) {
+    const userId = req.user?.id;
+    return this.usersService.patchPet(userId, body);
+  }
+
+  @ApiOperation({
+    summary: '반려동물 프로필 삭제',
+    description: '반려동물 프로필이 있는 경우 기존 데이터를 삭제합니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {Access token}',
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '반려동물 프로필 삭제 성공',
+    example: {
+      type: 'toast',
+      message: '반려동물 프로필이 삭제되었습니다.',
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: '삭제할 반려동물 프로필이 없는 경우',
+    example: { errorCode: -844 },
+  })
+  @Delete('pet')
+  async DeletePProfile(@Request() req: JwtRequest) {
+    const userId = req.user?.id;
+    return this.usersService.deleteUsersPet(userId);
   }
 }
