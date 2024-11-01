@@ -6,16 +6,31 @@ import {
   Patch,
   Post,
   Request,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiHeader,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { JwtRequest } from '~/auth/dto/jwt-payload.dto';
 import { JwtAuthGuard } from '~/auth/jwt/jwt-auth.guard';
 import { UsersService } from './users.service';
 import { GetProfileResponseDto } from './dto/profile.dto';
-import { PatchMeResponseDto } from './dto/me.dto';
+import { PatchMeRequestDto, PatchMeResponseDto } from './dto/me.dto';
 import { PetType } from '@prisma/client';
-import { PatchPetResponseDto, PostPetResponseDto } from './dto/pet.dto';
+import {
+  PatchPetRequestDto,
+  PatchPetResponseDto,
+  PostPetRequestDto,
+  PostPetResponseDto,
+} from './dto/pet.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Users')
 @ApiHeader({
@@ -61,6 +76,9 @@ export class UsersController {
     description: 'Bearer {Access token}',
     required: true,
   })
+  @ApiBody({
+    type: PatchMeRequestDto,
+  })
   @ApiResponse({
     status: 200,
     description: '사용자 프로필 수정 성공',
@@ -89,10 +107,14 @@ export class UsersController {
     summary: '반려동물 프로필 등록',
     description: '등록된 반려동물 프로필이 없는 경우 새롭게 등록합니다.',
   })
+  @ApiConsumes('multipart/form-data')
   @ApiHeader({
     name: 'Authorization',
     description: 'Bearer {Access token}',
     required: true,
+  })
+  @ApiBody({
+    type: PostPetRequestDto,
   })
   @ApiResponse({
     status: 201,
@@ -114,23 +136,29 @@ export class UsersController {
     description: '이미 등록된 반려동물이 있는 경우',
     example: { errorCode: -842 },
   })
+  @UseInterceptors(FileInterceptor('image'))
   @Post('pet')
   async postUsersPet(
-    @Body() body: { name: string; image?: string; petType: PetType },
+    @Body() body: { name: string; petType: PetType },
     @Request() req: JwtRequest,
+    @UploadedFile() image?: Express.Multer.File,
   ) {
     const userId = req.user?.id;
-    return this.usersService.postUsersPet(userId, body);
+    return this.usersService.postUsersPet(userId, body, image);
   }
 
   @ApiOperation({
     summary: '반려동물 프로필 수정',
     description: '반려동물 프로필이 있는 경우 기존 데이터를 수정합니다.',
   })
+  @ApiConsumes('multipart/form-data')
   @ApiHeader({
     name: 'Authorization',
     description: 'Bearer {Access token}',
     required: true,
+  })
+  @ApiBody({
+    type: PatchPetRequestDto,
   })
   @ApiResponse({
     status: 200,
@@ -142,13 +170,15 @@ export class UsersController {
     description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
     example: { errorCode: -825 },
   })
+  @UseInterceptors(FileInterceptor('image'))
   @Patch('pet')
   async getPetProfile(
-    @Body() body: { name: string; image?: string; petType: PetType },
+    @Body() body: { name?: string; petType?: PetType },
     @Request() req: JwtRequest,
+    @UploadedFile() image?: Express.Multer.File,
   ) {
     const userId = req.user?.id;
-    return this.usersService.patchPet(userId, body);
+    return this.usersService.patchPet(userId, body, image);
   }
 
   @ApiOperation({

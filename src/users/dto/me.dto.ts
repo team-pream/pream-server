@@ -63,3 +63,28 @@ export class PatchMeResponseDto {
   @IsString()
   contact: string | null;
 }
+
+export class PatchMeRequestDto {
+  @ApiProperty({
+    example: '두부 집사',
+    description: '사용자 닉네임 (최소 2자, 최대 20자)',
+    nullable: true,
+  })
+  @IsString()
+  @Length(2, 20)
+  nickname: string;
+
+  @ApiProperty({
+    example: '010-0000-0000',
+    description: '사용자 전화번호',
+  })
+  @IsPhoneNumber('KR')
+  phone: string;
+
+  @ApiProperty({
+    example: '서울시 강남구 선릉로',
+    description: '사용자 주소',
+  })
+  @IsString()
+  address: string;
+}

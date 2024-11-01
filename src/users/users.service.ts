@@ -71,7 +71,8 @@ export class UsersService {
 
   async postUsersPet(
     userId: string,
-    data: { image?: string; petType: PetType; name: string },
+    data: { petType: PetType; name: string },
+    image: Express.Multer.File,
   ) {
     const isPetExists = await this.prisma.pet.findUnique({
       where: { userId },
@@ -85,10 +86,20 @@ export class UsersService {
       throw new BadRequestException({ errorCode: -843 });
     }
 
-    return this.prisma.pet.create({
+    let imageUrl = null;
+    if (image) {
+      imageUrl = await this.awsService.uploadFile(
+        image,
+        process.env.AWS_S3_BUCKET_NAME,
+        'profile-images',
+      );
+    }
+
+    const updatedPet = this.prisma.pet.create({
       data: {
         userId,
         ...data,
+        ...(imageUrl !== null ? { image: imageUrl } : {}),
       },
       select: {
         id: true,
@@ -98,11 +109,17 @@ export class UsersService {
         createdAt: true,
       },
     });
+
+    return {
+      ...updatedPet,
+      image: imageUrl,
+    };
   }
 
   async patchPet(
     userId: string,
-    data: { image?: string; petType: PetType; name: string },
+    data: { petType?: PetType; name?: string },
+    image?: Express.Multer.File,
   ) {
     const pet = await this.prisma.pet.findUnique({
       where: { userId },
@@ -112,9 +129,22 @@ export class UsersService {
       throw new NotFoundException({ errorCode: -837 });
     }
 
+    let imageUrl = null;
+
+    if (image) {
+      imageUrl = await this.awsService.uploadFile(
+        image,
+        process.env.AWS_S3_BUCKET_NAME,
+        'profile-images',
+      );
+    }
+
     return this.prisma.pet.update({
       where: { userId },
-      data,
+      data: {
+        ...data,
+        ...(imageUrl !== null ? { image: imageUrl } : {}),
+      },
       select: {
         id: true,
         name: true,
