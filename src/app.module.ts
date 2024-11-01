@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { ProductModule } from './product/product.module';
 import { AwsModule } from './aws/aws.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AwsModule } from './aws/aws.module';
     UserModule,
     ProductModule,
     AwsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
