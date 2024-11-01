@@ -131,6 +131,7 @@ export class ProductService {
       title: product.title,
       price: product.price,
       status: product.status,
+      condition: product.condition,
       images: product.images,
       description: product.description,
       createdAt: product.createdAt,
@@ -288,9 +289,14 @@ export class ProductService {
         id: true,
         title: true,
         price: true,
-        createdAt: true,
-        images: true,
         status: true,
+        images: true,
+        description: true,
+        categoryId: true,
+        sellerId: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
   }
