@@ -31,7 +31,7 @@ import { UserPetRequestDto } from './dto/pet-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('User')
-@Controller('user')
+@Controller('users')
 @ApiHeader({
   name: 'Authorization',
   description: 'Bearer {Access token}',
@@ -55,7 +55,7 @@ export class UserController {
     example: { errorCode: -836 },
   })
   @UseGuards(JwtAuthGuard)
-  @Get('/profile')
+  @Get('/me')
   async getUser(@Request() req: JwtRequest) {
     return this.userService.getUser(req.user.id);
   }

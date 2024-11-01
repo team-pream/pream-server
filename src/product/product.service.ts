@@ -278,4 +278,21 @@ export class ProductService {
       throw new Error('상품 등록에 실패했습니다.');
     }
   }
+
+  async searchProducts(keyword: string) {
+    console.log('keyword', keyword);
+    return this.prisma.product.findMany({
+      where: {
+        title: { contains: keyword },
+      },
+      select: {
+        id: true,
+        title: true,
+        price: true,
+        createdAt: true,
+        images: true,
+        status: true,
+      },
+    });
+  }
 }

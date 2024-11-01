@@ -97,6 +97,25 @@ export class ProductController {
   }
 
   @ApiOperation({
+    summary: '상품 검색',
+    description: '원하는 상품을 검색합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '검색어에 해당하는 상품 목록을 반환합니다.',
+    type: ProductListResponseDto,
+  })
+  @ApiQuery({
+    name: 'keyword',
+    description: '검색어',
+    required: true,
+  })
+  @Get('search')
+  async searchProducts(@Query('keyword') keyword: string) {
+    return this.productService.searchProducts(keyword);
+  }
+
+  @ApiOperation({
     summary: '판매 내역 조회',
     description: '사용자의 판매 등록 내역을 조회합니다.',
   })
@@ -148,6 +167,31 @@ export class ProductController {
   }
 
   @ApiOperation({
+    summary: '판매 등록',
+    description: '상품을 판매하기 위한 정보를 등록합니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {Access token}',
+    required: true,
+  })
+  @UseGuards(JwtAuthGuard)
+  @Post('upload')
+  @UseInterceptors(FilesInterceptor('images'))
+  async postProductsUpload(
+    @Body() postProductsUploadDto: PostProductsUploadDto,
+    @UploadedFiles() images: Express.Multer.File[],
+    @Request() req: any,
+  ) {
+    const userId = req.user.id;
+    return await this.productService.postProductsUpload({
+      userId,
+      postProductsUploadDto,
+      images,
+    });
+  }
+
+  @ApiOperation({
     summary: '상품 상세 데이터 조회',
     description: '특정 상품의 상세 정보를 조회합니다.',
   })
@@ -181,31 +225,6 @@ export class ProductController {
     return await this.productService.getProductById({
       productId,
       userId,
-    });
-  }
-
-  @ApiOperation({
-    summary: '판매 등록',
-    description: '상품을 판매하기 위한 정보를 등록합니다.',
-  })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer {Access token}',
-    required: true,
-  })
-  @UseGuards(JwtAuthGuard)
-  @Post('upload')
-  @UseInterceptors(FilesInterceptor('images'))
-  async postProductsUpload(
-    @Body() postProductsUploadDto: PostProductsUploadDto,
-    @UploadedFiles() images: Express.Multer.File[],
-    @Request() req: any,
-  ) {
-    const userId = req.user.id;
-    return await this.productService.postProductsUpload({
-      userId,
-      postProductsUploadDto,
-      images,
     });
   }
 }

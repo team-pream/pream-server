@@ -81,7 +81,7 @@ export class UserResponseDto {
     isArray: true,
     description: '등록한 반려동물 리스트',
   })
-  pets: PetResponseDto[];
+  pets: PetResponseDto;
 }
 
 export class OnboardingUserDto {
