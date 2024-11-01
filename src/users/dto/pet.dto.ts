@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, Length } from 'class-validator';
 
-export class PetDto {
+export class GetPetResponseDto {
   @ApiProperty({
     example: 'faef8d88-a62f-4af0-84f3-26157ff293c2',
     description: '반려동물 아이디',

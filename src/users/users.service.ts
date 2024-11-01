@@ -41,22 +41,23 @@ export class UsersService {
     }
   }
 
-  async getUsersMe(id: string) {
-    const profile = await this.prisma.user.findUnique({
-      where: { id },
-    });
-
-    if (profile) {
-      return {
-        id: profile.id,
-        username: profile.username,
-        nickname: profile.nickname,
-        phone: profile.phone,
-        address: profile.address,
-        email: profile.email,
-        contact: profile.contact,
-      };
-    } else {
+  async patchUsersMe(
+    userId: string,
+    data: { nickname?: string; phone?: string; bankAccount?: any },
+  ) {
+    try {
+      return this.prisma.user.update({
+        where: { id: userId },
+        data,
+        select: {
+          id: true,
+          nickname: true,
+          phone: true,
+          bankAccount: true,
+          updatedAt: true,
+        },
+      });
+    } catch {
       throw new UnauthorizedException({ errorCode: -836 });
     }
   }

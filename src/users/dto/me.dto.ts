@@ -6,9 +6,8 @@ import {
   IsUUID,
   Length,
 } from 'class-validator';
-import { GetPetResponseDto } from './pet.dto';
 
-export class GetProfileResponseDto {
+export class PatchMeResponseDto {
   @ApiProperty({
     example: 'faef8d88-a62f-4af0-84f3-26157ff293c2',
     description: '사용자 아이디',
@@ -63,17 +62,4 @@ export class GetProfileResponseDto {
   })
   @IsString()
   contact: string | null;
-
-  @ApiProperty({
-    example: {
-      id: '57afd458-23ce-4dfb-8547-4d2904853cb4',
-      userId: '3998b589-8f71-45bc-9c4b-acedf545b117',
-      name: '두부',
-      image:
-        'https://github.com/user-attachments/assets/7e39f737-822e-4b85-90e2-ec8c1e96fd40',
-      petType: 'DOG',
-    },
-    description: '등록한 반려동물 정보<br/>등록한 반려동물이 없을 경우 null',
-  })
-  pet: GetPetResponseDto | null;
 }
