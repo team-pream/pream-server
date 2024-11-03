@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -9,6 +10,8 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -22,7 +25,11 @@ import { JwtRequest } from '~/auth/dto/jwt-payload.dto';
 import { JwtAuthGuard } from '~/auth/jwt/jwt-auth.guard';
 import { UsersService } from './users.service';
 import { GetProfileResponseDto } from './dto/profile.dto';
-import { PatchMeRequestDto, PatchMeResponseDto } from './dto/me.dto';
+import {
+  PatchMeRequestDto,
+  MeResponseDto,
+  PatchUsersAddressRequestDto,
+} from './dto/me.dto';
 import { PetType } from '@prisma/client';
 import {
   PatchPetRequestDto,
@@ -73,7 +80,7 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: '사용자 프로필 수정 성공',
-    type: PatchMeResponseDto,
+    type: MeResponseDto,
   })
   @ApiResponse({
     status: 401,
@@ -183,5 +190,51 @@ export class UsersController {
   async DeletePProfile(@Request() req: JwtRequest) {
     const userId = req.user?.id;
     return this.usersService.deleteUsersPet(userId);
+  }
+
+  @ApiOperation({
+    summary: '사용자 주소 수정/등록',
+    description: '사용자 주소를 수정하거나 새롭게 등록할 수 있습니다.',
+  })
+  @ApiBody({
+    description: '<strong>모든 필드를 전달해야 합니다.</strong>',
+    type: PatchUsersAddressRequestDto,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '주소 수정/등록 성공',
+    type: MeResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: '필수 항목이 누락된 경우',
+    example: { errorCode: -845 },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
+    example: { errorCode: -825 },
+  })
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      exceptionFactory: () => {
+        return new BadRequestException({
+          errorCode: -845,
+        });
+      },
+    }),
+  )
+  @Patch('address')
+  async updateAddress(
+    @Body() patchUsersAddressRequestDto: PatchUsersAddressRequestDto,
+    @Request() req: JwtRequest,
+  ) {
+    const userId = req.user.id;
+    return this.usersService.patchUsersAddress({
+      userId,
+      patchUsersAddressRequestDto,
+    });
   }
 }
