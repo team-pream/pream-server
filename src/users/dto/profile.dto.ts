@@ -7,6 +7,7 @@ import {
   Length,
 } from 'class-validator';
 import { GetPetResponseDto } from './pet.dto';
+import { PatchUsersAddressRequestDto } from './me.dto';
 
 export class GetProfileResponseDto {
   @ApiProperty({
@@ -41,12 +42,17 @@ export class GetProfileResponseDto {
   phone: string | null;
 
   @ApiProperty({
-    example: '서울시 강남구 선릉로',
+    example: {
+      zonecode: '06192',
+      roadAddress: '서울 강남구 선릉로 428',
+      jibunAddress: '서울 강남구 대치동 889-41',
+      detailAddress: '멀티캠퍼스 선릉 4층 401호',
+    },
     description: '사용자 주소',
     nullable: true,
   })
   @IsString()
-  address: string | null;
+  address: PatchUsersAddressRequestDto | null;
 
   @ApiProperty({
     example: 'team0pream@gmail.com',

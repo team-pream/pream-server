@@ -8,6 +8,7 @@ import {
 import { PetType } from '@prisma/client';
 import { AwsService } from '~/aws/aws.service';
 import { PrismaService } from '~/prisma/prisma.service';
+import { PatchUsersAddressRequestDto } from './dto/me.dto';
 
 @Injectable()
 export class UsersService {
@@ -175,5 +176,47 @@ export class UsersService {
     } catch {
       throw new UnauthorizedException({ errorCode: -836 });
     }
+  }
+
+  async patchUsersAddress({
+    userId,
+    patchUsersAddressRequestDto,
+  }: {
+    userId: string;
+    patchUsersAddressRequestDto: PatchUsersAddressRequestDto;
+  }) {
+    const { zonecode, roadAddress, jibunAddress, detailAddress } =
+      patchUsersAddressRequestDto;
+
+    if (!zonecode || !roadAddress || !jibunAddress || !detailAddress) {
+      throw new BadRequestException({
+        errorCode: -845,
+      });
+    }
+
+    const address = JSON.parse(JSON.stringify(patchUsersAddressRequestDto));
+
+    const existingUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!existingUser) {
+      throw new NotFoundException({ errorCode: -825 });
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { address },
+    });
+
+    return {
+      id: updatedUser.id,
+      username: updatedUser.username,
+      nickname: updatedUser.nickname,
+      phone: updatedUser.phone,
+      address: updatedUser.address,
+      email: updatedUser.email,
+      contact: updatedUser.contact,
+    };
   }
 }
