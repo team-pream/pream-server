@@ -8,6 +8,7 @@ import {
   IsUUID,
   Length,
 } from 'class-validator';
+import { PatchUsersAddressRequestDto } from '~/users/dto/me.dto';
 
 export class UserResponseDto {
   @ApiProperty({
@@ -42,12 +43,17 @@ export class UserResponseDto {
   phone: string | null;
 
   @ApiProperty({
-    example: '서울시 강남구 선릉로',
+    example: {
+      zonecode: '06192',
+      roadAddress: '서울 강남구 선릉로 428',
+      jibunAddress: '서울 강남구 대치동 889-41',
+      detailAddress: '멀티캠퍼스 선릉 4층 401호',
+    },
     description: '유저 주소',
     nullable: true,
   })
   @IsString()
-  address: string | null;
+  address: PatchUsersAddressRequestDto | null;
 
   @ApiProperty({
     example: 'team0pream@gmail.com',
