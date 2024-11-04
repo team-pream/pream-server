@@ -131,6 +131,7 @@ enum PetType {
 enum ProductStatusType {
   AVAILABLE
   SOLD_OUT
+  RESERVED
 }
 
 enum ProductConditionType {
