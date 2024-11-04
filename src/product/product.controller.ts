@@ -2,11 +2,14 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
+  Req,
   Request,
   UploadedFiles,
   UseGuards,
@@ -24,12 +27,13 @@ import { ProductService } from './product.service';
 import { ProductListResponseDto } from './dto/product.dto';
 import { PRODUCT_STATUS, ProductStatusType } from './constants/product';
 import { JwtOptionalAuthGuard } from '~/auth/jwt/jwt-optional-auth.guard';
-import { ProductDetailDto } from './dto/product-detail.dto';
+import { GetProductsDetailResponseDto } from './dto/product-detail.dto';
 import { GetProductsCurationResponseDto } from './dto/curated-product.dto';
 import { JwtAuthGuard } from '~/auth/jwt/jwt-auth.guard';
 import { SalesListProductResponseDto } from './dto/sales-list-product.dto';
 import { PostProductsUploadDto } from './dto/post-products-upload.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { PatchProductsDetailDto } from './dto/update-product.dto';
 
 @ApiTags('Product')
 @Controller('products')
@@ -220,7 +224,7 @@ export class ProductController {
     status: 200,
     description:
       '특정 상품의 상세 정보를 반환합니다.<br/>로그인하지 않은 사용자가 조회하는 경우, 각 상품의 isLiked 필드는 false로 반환됩니다.',
-    type: ProductDetailDto,
+    type: GetProductsDetailResponseDto,
   })
   @ApiResponse({
     status: 404,
@@ -236,6 +240,83 @@ export class ProductController {
     return await this.productService.getProductById({
       productId,
       userId,
+    });
+  }
+
+  @ApiOperation({
+    summary: '등록한 상품 상세 데이터 수정',
+    description: '특정 상품의 상세 정보를 수정합니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {Access token}',
+    required: true,
+  })
+  @ApiParam({
+    name: 'productId',
+    type: Number,
+    description: '상품 ID',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '',
+    type: GetProductsDetailResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      '잘못된 상품 id를 사용하거나 존재하지 않는 상품을 조회하려는 경우',
+    example: { errorCode: -855 },
+  })
+  @Patch(':productId')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FilesInterceptor('images'))
+  async updateProduct(
+    @Param('productId') productId: string,
+    @Body() patchProductsDetailDto: PatchProductsDetailDto,
+    @UploadedFiles() images: Express.Multer.File[],
+    @Req() req: any,
+  ) {
+    const userId = req.user?.id;
+    return this.productService.patchProductsDetail({
+      userId,
+      productId: Number(productId),
+      patchProductsDetailDto,
+      images,
+    });
+  }
+
+  @ApiOperation({
+    summary: '등록한 상품 삭제',
+    description: '특정 상품을 삭제합니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {Access token}',
+    required: true,
+  })
+  @ApiParam({
+    name: 'productId',
+    type: Number,
+    description: '상품 ID',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '상품 삭제 성공',
+    example: { message: '상품이 삭제되었습니다.' },
+  })
+  @ApiResponse({
+    status: 403,
+    description: '삭제할 권한이 없는 경우',
+    example: { errorCode: -857 },
+  })
+  @Delete(':productId')
+  @UseGuards(JwtAuthGuard)
+  async deleteProduct(@Param('productId') productId: string, @Req() req: any) {
+    const userId = req.user?.id;
+    return this.productService.deleteProductsDetail({
+      userId,
+      productId: Number(productId),
     });
   }
 }

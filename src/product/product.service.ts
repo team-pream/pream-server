@@ -1,9 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '~/prisma/prisma.service';
 import { ProductStatusType } from './constants/product';
 import { Product } from '@prisma/client';
 import { PostProductsUploadDto } from './dto/post-products-upload.dto';
 import { AwsService } from '~/aws/aws.service';
+import { PatchProductsDetailDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductService {
@@ -101,7 +108,6 @@ export class ProductService {
         condition: true,
         images: true,
         description: true,
-        createdAt: true,
         category: {
           select: {
             id: true,
@@ -112,6 +118,8 @@ export class ProductService {
           select: {
             id: true,
             nickname: true,
+            contact: true,
+            bankAccount: true,
           },
         },
         _count: {
@@ -119,6 +127,7 @@ export class ProductService {
             likes: true,
           },
         },
+        createdAt: true,
       },
     });
 
@@ -277,6 +286,96 @@ export class ProductService {
       });
     } catch {
       throw new Error('상품 등록에 실패했습니다.');
+    }
+  }
+
+  async patchProductsDetail({
+    userId,
+    productId,
+    patchProductsDetailDto,
+    images,
+  }: {
+    userId: string;
+    productId: number;
+    patchProductsDetailDto: PatchProductsDetailDto;
+    images?: Express.Multer.File[];
+  }) {
+    const {
+      condition,
+      price,
+      categoryId,
+      title,
+      description,
+      contact,
+      bankAccount,
+    } = patchProductsDetailDto;
+
+    // 기존 상품 확인
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+    });
+
+    if (!product || product.sellerId !== userId) {
+      throw new BadRequestException({ errorCode: -855 });
+    }
+
+    let imageUrls = product.images;
+    if (images && images.length > 0) {
+      imageUrls = await Promise.all(
+        images.map((image) =>
+          this.awsService.uploadFile(
+            image,
+            process.env.AWS_S3_BUCKET_NAME,
+            'product-images',
+          ),
+        ),
+      );
+    }
+
+    try {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { contact, bankAccount: JSON.parse(bankAccount) },
+      });
+
+      return this.prisma.product.update({
+        where: { id: productId },
+        data: {
+          images: imageUrls,
+          condition,
+          price: Number(price),
+          categoryId: Number(categoryId),
+          title,
+          description,
+        },
+      });
+    } catch {
+      throw new Error('상품 수정에 실패했습니다.');
+    }
+  }
+
+  async deleteProductsDetail({
+    userId,
+    productId,
+  }: {
+    userId: string;
+    productId: number;
+  }) {
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+    });
+
+    if (!product || product.sellerId !== userId) {
+      throw new ForbiddenException({ errorCode: -856 });
+    }
+
+    try {
+      await this.prisma.product.delete({
+        where: { id: productId },
+      });
+      return { message: '상품이 삭제되었습니다.' };
+    } catch {
+      throw new InternalServerErrorException({ errorCode: -857 });
     }
   }
 
