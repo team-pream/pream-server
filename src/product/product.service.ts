@@ -280,7 +280,13 @@ export class ProductService {
     }
   }
 
-  async searchProducts(keyword: string, status?: ProductStatusType) {
+  async searchProducts({
+    keyword,
+    status,
+  }: {
+    keyword: string;
+    status?: ProductStatusType;
+  }) {
     const whereConditions: any = { title: { contains: keyword } };
 
     if (status) {
