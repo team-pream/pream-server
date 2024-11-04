@@ -280,11 +280,15 @@ export class ProductService {
     }
   }
 
-  async searchProducts(keyword: string) {
+  async searchProducts(keyword: string, status?: ProductStatusType) {
+    const whereConditions: any = { title: { contains: keyword } };
+
+    if (status) {
+      whereConditions.status = status;
+    }
+
     const products = await this.prisma.product.findMany({
-      where: {
-        title: { contains: keyword },
-      },
+      where: whereConditions,
       select: {
         id: true,
         title: true,

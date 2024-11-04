@@ -110,9 +110,17 @@ export class ProductController {
     description: '검색어',
     required: true,
   })
+  @ApiQuery({
+    name: 'status',
+    description: '상품 상태<br/>AVAILABLE: 1, SOLD_OUT: 2, RESERVED: 3',
+    required: false,
+  })
   @Get('search')
-  async searchProducts(@Query('keyword') keyword: string) {
-    return this.productService.searchProducts(keyword);
+  async searchProducts(
+    @Query('keyword') keyword: string,
+    @Query('status') status?: ProductStatusType,
+  ) {
+    return this.productService.searchProducts(keyword, status);
   }
 
   @ApiOperation({
