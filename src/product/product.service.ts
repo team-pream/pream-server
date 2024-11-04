@@ -281,7 +281,7 @@ export class ProductService {
   }
 
   async searchProducts(keyword: string) {
-    return this.prisma.product.findMany({
+    const products = await this.prisma.product.findMany({
       where: {
         title: { contains: keyword },
       },
@@ -299,5 +299,10 @@ export class ProductService {
         createdAt: 'desc',
       },
     });
+
+    return {
+      totalCount: products.length,
+      products,
+    };
   }
 }
