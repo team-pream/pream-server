@@ -111,7 +111,7 @@ export class GetProfileResponseDto {
     example: { bank: 'KB', accountNumber: '300000000000' },
     description: '판매정산계좌',
   })
-  bankAccount: BankAccount;
+  bankAccount: BankAccount | null;
 
   @ApiProperty({
     example: {

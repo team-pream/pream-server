@@ -92,12 +92,12 @@ export class MeResponseDto {
   email: string | null;
 
   @ApiProperty({
-    example: { bank: '우리은행', accountNumber: '300000000000' },
+    example: { bank: 'WR', accountNumber: '300000000000' },
     description: '판매정산계좌',
     required: false,
   })
   @IsString()
-  bankAccount?: { bank: BankType; accountNumber: string };
+  bankAccount?: { bank: BankType; accountNumber: string } | null;
 
   @ApiProperty({
     example: 'https://open.kakao.com/o/gf8f8d8',
@@ -126,7 +126,7 @@ export class PatchMeRequestDto {
   phone: string;
 
   @ApiProperty({
-    example: { bank: '우리은행', accountNumber: '300000000000' },
+    example: { bank: 'WR', accountNumber: '300000000000' },
     description: '판매정산계좌',
     required: false,
   })
