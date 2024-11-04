@@ -9,6 +9,43 @@ import {
 import { GetPetResponseDto } from './pet.dto';
 import { PatchUsersAddressRequestDto } from './me.dto';
 
+export enum BankType {
+  SH = 'SH',
+  WR = 'WR',
+  KB = 'KB',
+  HN = 'HN',
+  IB = 'IB',
+  NH = 'NH',
+  SHB = 'SHB',
+  BS = 'BS',
+  JJ = 'JJ',
+  GN = 'GN',
+  JB = 'JB',
+  GJ = 'GJ',
+  DG = 'DG',
+  SU = 'SU',
+  SM = 'SM',
+  UC = 'UC',
+  KBK = 'KBK',
+  KK = 'KK',
+  TS = 'TS',
+}
+
+export class BankAccount {
+  @ApiProperty({
+    example: 'KB',
+    description: '은행 종류',
+    enum: BankType,
+  })
+  bank: BankType;
+
+  @ApiProperty({
+    example: '300000000000',
+    description: '계좌 번호',
+  })
+  accountNumber: string;
+}
+
 export class GetProfileResponseDto {
   @ApiProperty({
     example: 'faef8d88-a62f-4af0-84f3-26157ff293c2',
@@ -69,6 +106,12 @@ export class GetProfileResponseDto {
   })
   @IsString()
   contact: string | null;
+
+  @ApiProperty({
+    example: { bank: 'KB', accountNumber: '300000000000' },
+    description: '판매정산계좌',
+  })
+  bankAccount: BankAccount | null;
 
   @ApiProperty({
     example: {

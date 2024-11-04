@@ -7,6 +7,7 @@ import {
   IsUUID,
   Length,
 } from 'class-validator';
+import { BankType } from './profile.dto';
 
 export class PatchUsersAddressRequestDto {
   @ApiProperty({
@@ -91,6 +92,14 @@ export class MeResponseDto {
   email: string | null;
 
   @ApiProperty({
+    example: { bank: 'WR', accountNumber: '300000000000' },
+    description: '판매정산계좌',
+    required: false,
+  })
+  @IsString()
+  bankAccount?: { bank: BankType; accountNumber: string } | null;
+
+  @ApiProperty({
     example: 'https://open.kakao.com/o/gf8f8d8',
     description: '사용자 연락처',
   })
@@ -117,10 +126,10 @@ export class PatchMeRequestDto {
   phone: string;
 
   @ApiProperty({
-    example: { bank: '우리은행', accountNumber: '300000000000' },
+    example: { bank: 'WR', accountNumber: '300000000000' },
     description: '판매정산계좌',
     required: false,
   })
   @IsString()
-  bankAccount?: { bank: string; accountNumber: string };
+  bankAccount?: { bank: BankType; accountNumber: string };
 }

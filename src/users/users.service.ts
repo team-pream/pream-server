@@ -9,6 +9,7 @@ import { PetType } from '@prisma/client';
 import { AwsService } from '~/aws/aws.service';
 import { PrismaService } from '~/prisma/prisma.service';
 import { PatchUsersAddressRequestDto } from './dto/me.dto';
+import { BankType } from './dto/profile.dto';
 
 @Injectable()
 export class UsersService {
@@ -34,6 +35,7 @@ export class UsersService {
         address: profile.address,
         email: profile.email,
         contact: profile.contact,
+        bankAccount: profile.bankAccount,
         pet: profile.pet
           ? {
               id: profile.pet.id,
@@ -51,7 +53,11 @@ export class UsersService {
 
   async patchUsersMe(
     userId: string,
-    data: { nickname?: string; phone?: string; bankAccount?: any },
+    data: {
+      nickname?: string;
+      phone?: string;
+      bankAccount?: { bank: BankType; accountNumber: string };
+    },
   ) {
     try {
       return this.prisma.user.update({
