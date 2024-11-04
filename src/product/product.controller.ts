@@ -120,7 +120,10 @@ export class ProductController {
     @Query('keyword') keyword: string,
     @Query('status') status?: ProductStatusType,
   ) {
-    return this.productService.searchProducts(keyword, status);
+    return this.productService.searchProducts({
+      keyword,
+      status: PRODUCT_STATUS[status],
+    });
   }
 
   @ApiOperation({
