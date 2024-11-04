@@ -3,9 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING") 
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model User {
@@ -52,7 +52,7 @@ model Category {
 }
 
 model Product {
-  id          Int               @id @default(autoincrement())
+  id          Int                  @id @default(autoincrement())
   categoryId  Int
   sellerId    String
   title       String
@@ -61,12 +61,12 @@ model Product {
   condition   ProductConditionType
   images      String[]
   description String?
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
   likes       Like[]
   orders      Order[]
-  category    Category          @relation(fields: [categoryId], references: [id])
-  seller      User              @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  category    Category             @relation(fields: [categoryId], references: [id])
+  seller      User                 @relation(fields: [sellerId], references: [id], onDelete: Cascade)
 }
 
 model Order {
@@ -101,6 +101,28 @@ enum ProviderType {
   KAKAO
 }
 
+enum BankType {
+  SH
+  WR
+  KB
+  HN
+  IB
+  NH
+  SHB
+  BS
+  JJ
+  GN
+  JB
+  GJ
+  DG
+  SU
+  SM
+  UC
+  KBK
+  KK
+  TS
+}
+
 enum PetType {
   DOG
   CAT
@@ -112,9 +134,9 @@ enum ProductStatusType {
 }
 
 enum ProductConditionType {
-   NEW      
-   SLIGHTLY_USED 
-   HEAVILY_USED  
+  NEW
+  SLIGHTLY_USED
+  HEAVILY_USED
 }
 
 enum OrderStatusType {

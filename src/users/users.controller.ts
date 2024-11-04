@@ -24,7 +24,7 @@ import {
 import { JwtRequest } from '~/auth/dto/jwt-payload.dto';
 import { JwtAuthGuard } from '~/auth/jwt/jwt-auth.guard';
 import { UsersService } from './users.service';
-import { GetProfileResponseDto } from './dto/profile.dto';
+import { BankType, GetProfileResponseDto } from './dto/profile.dto';
 import {
   PatchMeRequestDto,
   MeResponseDto,
@@ -93,7 +93,7 @@ export class UsersController {
     updateData: {
       nickname?: string;
       phone?: string;
-      bankAccount?: { bank: string; accountNumber: string };
+      bankAccount?: { bank: BankType; accountNumber: string };
     },
     @Request() req?: any,
   ) {
