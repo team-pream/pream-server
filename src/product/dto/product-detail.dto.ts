@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { BankAccount } from '~/users/dto/profile.dto';
 
 export enum ProductConditionType {
   NEW = 'NEW',
@@ -25,9 +26,18 @@ export class SellerDto {
 
   @ApiProperty({ example: '냥이' })
   nickname: string;
+
+  @ApiProperty({ example: 'junho@example.com' })
+  contact: string;
+
+  @ApiProperty({
+    example: { bank: 'KB', accountNumber: '300000000000' },
+    description: '판매정산계좌',
+  })
+  bankAccount: BankAccount | null;
 }
 
-export class ProductDetailDto {
+export class GetProductsDetailResponseDto {
   @ApiProperty({ example: 5 })
   id: number;
 
@@ -58,9 +68,6 @@ export class ProductDetailDto {
   })
   description: string;
 
-  @ApiProperty({ example: '2024-10-24T01:30:18.457Z' })
-  createdAt: Date;
-
   @ApiProperty({ type: CategoryDto })
   category: CategoryDto;
 
@@ -75,4 +82,7 @@ export class ProductDetailDto {
 
   @ApiProperty({ example: false })
   isLiked: boolean;
+
+  @ApiProperty({ example: '2024-10-24T01:30:18.457Z' })
+  createdAt: Date;
 }
