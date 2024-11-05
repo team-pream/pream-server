@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotAcceptableException,
+} from '@nestjs/common';
 import { PrismaService } from '~/prisma/prisma.service';
 import { PostOrdersProductRequestDto } from './dto/post-orders.dto';
 
@@ -32,7 +36,7 @@ export class OrdersService {
       !phone
     ) {
       throw new BadRequestException({
-        errorCode: -845,
+        errorCode: -910,
       });
     }
 
@@ -46,19 +50,13 @@ export class OrdersService {
       where: { id: productId },
     });
 
-    if (!product) {
-      throw new BadRequestException({
-        errorCode: -845,
+    if (!product || product.status !== 'AVAILABLE') {
+      throw new NotAcceptableException({
+        errorCode: -911,
       });
     }
 
-    if (product.status !== 'AVAILABLE') {
-      throw new BadRequestException({
-        errorCode: -845,
-      });
-    }
-
-    return await this.prisma.order.upsert({
+    const orderSheet = await this.prisma.order.upsert({
       where: {
         userId_productId: {
           userId,
@@ -86,5 +84,15 @@ export class OrdersService {
         phone,
       },
     });
+
+    return {
+      ...orderSheet,
+      product: {
+        id: product.id,
+        title: product.title,
+        description: product.description,
+        images: product.images,
+      },
+    };
   }
 }

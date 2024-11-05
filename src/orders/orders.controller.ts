@@ -16,7 +16,10 @@ import {
 import { JwtAuthGuard } from '~/auth/jwt/jwt-auth.guard';
 import { OrdersService } from './orders.service';
 import { JwtRequest } from '~/auth/dto/jwt-payload.dto';
-import { PostOrdersProductRequestDto } from './dto/post-orders.dto';
+import {
+  PostOrderProductResponseDto,
+  PostOrdersProductRequestDto,
+} from './dto/post-orders.dto';
 
 @ApiTags('Orders')
 @ApiHeader({
@@ -39,12 +42,22 @@ export class OrdersController {
   @ApiResponse({
     status: 201,
     description: '주문 정보 등록 성공',
-    // type: GetProfileResponseDto,
+    type: PostOrderProductResponseDto,
   })
   @ApiResponse({
     status: 401,
     description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
     example: { errorCode: -825 },
+  })
+  @ApiResponse({
+    status: 400,
+    description: '필수 요청 값이 누락된 경우',
+    example: { errorCode: -910 },
+  })
+  @ApiResponse({
+    status: 406,
+    description: '유효하지 않은 상품 ID인 경우',
+    example: { errorCode: -911 },
   })
   @Post(':productId')
   async postOrdersProduct(
