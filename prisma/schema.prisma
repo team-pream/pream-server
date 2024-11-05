@@ -72,8 +72,10 @@ model Product {
 model Order {
   id              Int               @id @default(autoincrement())
   userId          String
-  status          OrderStatusType
+  receiverName    String?
   paymentAmount   Int
+  status          OrderStatusType
+  paymentStatus   PaymentStatusType
   paymentMethod   PaymentMethodType
   shippingAddress String
   phone           String
@@ -159,4 +161,15 @@ enum PaymentMethodType {
   BOOK_GIFT_CARD
   GAME_GIFT_CARD
   INTL_SIMPLE_PAYMENT
+}
+
+enum PaymentStatusType {
+  READY
+  IN_PROGRESS 
+  WAITING_FOR_DEPOSIT
+  DONE
+  CANCELED
+  PARTIAL_CANCELED
+  ABORTED
+  EXPIRED
 }

@@ -35,6 +35,7 @@ import { PostProductsUploadDto } from './dto/post-products-upload.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { PatchProductsDetailDto } from './dto/update-product.dto';
 import { ERROR_RESPONSE } from '~/errors/error';
+import { JwtRequest } from '~/auth/dto/jwt-payload.dto';
 
 @ApiTags('Product')
 @Controller('products')
@@ -193,7 +194,7 @@ export class ProductController {
   async postProductsUpload(
     @Body() postProductsUploadDto: PostProductsUploadDto,
     @UploadedFiles() images: Express.Multer.File[],
-    @Request() req: any,
+    @Request() req: JwtRequest,
   ) {
     const userId = req.user.id;
     return await this.productService.postProductsUpload({
@@ -272,7 +273,7 @@ export class ProductController {
     @Param('productId') productId: string,
     @Body() patchProductsDetailDto: PatchProductsDetailDto,
     @UploadedFiles() images: Express.Multer.File[],
-    @Req() req: any,
+    @Req() req: JwtRequest,
   ) {
     const userId = req.user?.id;
     return this.productService.patchProductsDetail({
@@ -309,7 +310,10 @@ export class ProductController {
   })
   @Delete(':productId')
   @UseGuards(JwtAuthGuard)
-  async deleteProduct(@Param('productId') productId: string, @Req() req: any) {
+  async deleteProduct(
+    @Param('productId') productId: string,
+    @Req() req: JwtRequest,
+  ) {
     const userId = req.user?.id;
     return this.productService.deleteProductsDetail({
       userId,
