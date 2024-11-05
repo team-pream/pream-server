@@ -11,28 +11,12 @@ import { BankType } from './profile.dto';
 
 export class PatchUsersAddressRequestDto {
   @ApiProperty({
-    example: '06192',
-    description: '우편번호',
-  })
-  @IsString()
-  @IsNotEmpty()
-  zonecode: string;
-
-  @ApiProperty({
     example: '서울 강남구 선릉로 428',
     description: '도로명 주소',
   })
   @IsString()
   @IsNotEmpty()
   roadAddress: string;
-
-  @ApiProperty({
-    example: '서울 강남구 대치동 889-41',
-    description: '지번 주소',
-  })
-  @IsString()
-  @IsNotEmpty()
-  jibunAddress: string;
 
   @ApiProperty({
     example: '멀티캠퍼스 선릉 4층 401호',
@@ -74,9 +58,7 @@ export class MeResponseDto {
 
   @ApiProperty({
     example: {
-      zonecode: '06192',
       roadAddress: '서울 강남구 선릉로 428',
-      jibunAddress: '서울 강남구 대치동 889-41',
       detailAddress: '멀티캠퍼스 선릉 4층 401호',
     },
     description: '사용자 주소',

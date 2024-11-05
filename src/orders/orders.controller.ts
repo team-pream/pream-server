@@ -14,27 +14,27 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '~/auth/jwt/jwt-auth.guard';
-import { PaymentsService } from './payments.service';
+import { OrdersService } from './orders.service';
 import { JwtRequest } from '~/auth/dto/jwt-payload.dto';
-import { PostOrdersRequestDto } from './dto/post-orders.dto';
+import { PostOrdersProductRequestDto } from './dto/post-orders.dto';
 
-@ApiTags('Payments')
+@ApiTags('Orders')
 @ApiHeader({
   name: 'Authorization',
   description: 'Bearer {Access token}',
   required: true,
 })
 @UseGuards(JwtAuthGuard)
-@Controller('payments')
-export class PaymentsController {
-  constructor(private paymentsService: PaymentsService) {}
+@Controller('orders')
+export class OrdersController {
+  constructor(private ordersService: OrdersService) {}
 
   @ApiOperation({
     summary: '주문 정보 전송',
     description: '결제로 넘어가기 전 주문 정보를 DB에 저장합니다.',
   })
   @ApiBody({
-    type: PostOrdersRequestDto,
+    type: PostOrdersProductRequestDto,
   })
   @ApiResponse({
     status: 201,
@@ -46,15 +46,15 @@ export class PaymentsController {
     description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
     example: { errorCode: -825 },
   })
-  @Post(':proudctId')
-  async postOrderSheet(
+  @Post(':productId')
+  async postOrdersProduct(
     @Param('productId') productId: string,
-    @Body() postOrdersRequest: PostOrdersRequestDto,
+    @Body() postOrdersRequest: PostOrdersProductRequestDto,
     @Request()
     req: JwtRequest,
   ) {
     const userId = req.user?.id;
-    return this.paymentsService.postOrderSheet({
+    return this.ordersService.postOrdersProduct({
       userId,
       productId: Number(productId),
       postOrdersRequest,
