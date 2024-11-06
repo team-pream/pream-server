@@ -34,6 +34,7 @@ import { SalesListProductResponseDto } from './dto/sales-list-product.dto';
 import { PostProductsUploadDto } from './dto/post-products-upload.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { PatchProductsDetailDto } from './dto/update-product.dto';
+import { ERROR_RESPONSE } from '~/errors/error';
 
 @ApiTags('Product')
 @Controller('products')
@@ -150,9 +151,7 @@ export class ProductController {
     description: '유효하지 않은 사용자 - Access token이 유효하지 않거나 만료됨',
     content: {
       'application/json': {
-        example: {
-          errorCode: -825,
-        },
+        example: ERROR_RESPONSE.INVALID_ACCESS_TOKEN,
       },
     },
   })
@@ -161,9 +160,7 @@ export class ProductController {
     description: '유효하지 않은 사용자 - Authorization 헤더가 없는 경우',
     content: {
       'application/json': {
-        example: {
-          errorCode: -954,
-        },
+        example: ERROR_RESPONSE.NO_AUTHORIZATION_HEADER,
       },
     },
   })
@@ -173,7 +170,7 @@ export class ProductController {
     const userId = req.user?.id;
 
     if (!userId) {
-      throw new BadRequestException({ errorCode: -825 });
+      throw new BadRequestException(ERROR_RESPONSE.INVALID_ACCESS_TOKEN);
     }
 
     return await this.productService.getProductsBySellerId({
@@ -229,7 +226,7 @@ export class ProductController {
   @ApiResponse({
     status: 404,
     description: '상품 ID가 잘못되었거나 존재하지 않는 경우',
-    example: { errorCode: -855 },
+    example: ERROR_RESPONSE.INVALID_PRODUCT_ID,
   })
   @Get(':productId')
   async getProduct(
@@ -266,7 +263,7 @@ export class ProductController {
     status: 400,
     description:
       '잘못된 상품 id를 사용하거나 존재하지 않는 상품을 조회하려는 경우',
-    example: { errorCode: -855 },
+    example: ERROR_RESPONSE.INVALID_PRODUCT_ID,
   })
   @Patch(':productId')
   @UseGuards(JwtAuthGuard)
@@ -308,7 +305,7 @@ export class ProductController {
   @ApiResponse({
     status: 403,
     description: '삭제할 권한이 없는 경우',
-    example: { errorCode: -857 },
+    example: ERROR_RESPONSE.PRODUCT_DELETE_FAILED,
   })
   @Delete(':productId')
   @UseGuards(JwtAuthGuard)

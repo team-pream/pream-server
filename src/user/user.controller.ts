@@ -29,6 +29,7 @@ import {
 import { UserService } from '~/user/user.service';
 import { UserPetRequestDto } from './dto/pet-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ERROR_RESPONSE } from '~/errors/error';
 
 @ApiTags('User')
 @Controller('user')
@@ -52,7 +53,7 @@ export class UserController {
   @ApiResponse({
     status: 401,
     description: '유효하지 않은 사용자',
-    example: { errorCode: -836 },
+    example: ERROR_RESPONSE.INVALID_USER,
   })
   @UseGuards(JwtAuthGuard)
   @Get('/me')
@@ -86,7 +87,7 @@ export class UserController {
   @ApiResponse({
     status: 400,
     description: '닉네임이 중복될 경우',
-    example: { errorCode: -834 },
+    example: ERROR_RESPONSE.DUPLICATED_NICKNAME,
   })
   @UseGuards(JwtAuthGuard)
   @Post('/check-nickname')
@@ -100,7 +101,7 @@ export class UserController {
     if (isAvailableNickname) {
       return res.status(200).send();
     } else {
-      throw new BadRequestException({ errorCode: -834 });
+      throw new BadRequestException(ERROR_RESPONSE.DUPLICATED_NICKNAME);
     }
   }
 
@@ -123,7 +124,7 @@ export class UserController {
   @ApiResponse({
     status: 400,
     description: '이미 등록된 반려동물이 있는 경우',
-    example: { errorCode: -839 },
+    example: ERROR_RESPONSE.PET_ALREADY_EXIST_ONBOARDING,
   })
   @ApiBody({ type: UserPetRequestDto })
   @UseGuards(JwtAuthGuard)
@@ -153,9 +154,7 @@ export class UserController {
   @ApiResponse({
     status: 400,
     description: '프로필 수정 실패',
-    example: {
-      errorCode: -840,
-    },
+    example: ERROR_RESPONSE.PROFILE_EDIT_FAILED,
   })
   @UseGuards(JwtAuthGuard)
   @Patch('profile')
@@ -174,7 +173,7 @@ export class UserController {
         image,
       });
     } catch {
-      throw new BadRequestException({ errorCode: -840 });
+      throw new BadRequestException(ERROR_RESPONSE.PROFILE_EDIT_FAILED);
     }
   }
 }

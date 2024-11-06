@@ -11,6 +11,7 @@ import { Product } from '@prisma/client';
 import { PostProductsUploadDto } from './dto/post-products-upload.dto';
 import { AwsService } from '~/aws/aws.service';
 import { PatchProductsDetailDto } from './dto/update-product.dto';
+import { ERROR_RESPONSE } from '~/errors/error';
 
 @Injectable()
 export class ProductService {
@@ -132,7 +133,7 @@ export class ProductService {
     });
 
     if (!product) {
-      throw new NotFoundException({ errorCode: -855 });
+      throw new NotFoundException(ERROR_RESPONSE.INVALID_PRODUCT_ID);
     }
 
     return {
@@ -316,7 +317,7 @@ export class ProductService {
     });
 
     if (!product || product.sellerId !== userId) {
-      throw new BadRequestException({ errorCode: -855 });
+      throw new BadRequestException(ERROR_RESPONSE.INVALID_PRODUCT_ID);
     }
 
     let imageUrls = product.images;
@@ -366,7 +367,9 @@ export class ProductService {
     });
 
     if (!product || product.sellerId !== userId) {
-      throw new ForbiddenException({ errorCode: -856 });
+      throw new ForbiddenException(
+        ERROR_RESPONSE.NO_PERMISSION_TO_DELETE_PRODUCT,
+      );
     }
 
     try {
@@ -375,7 +378,9 @@ export class ProductService {
       });
       return { message: '상품이 삭제되었습니다.' };
     } catch {
-      throw new InternalServerErrorException({ errorCode: -857 });
+      throw new InternalServerErrorException(
+        ERROR_RESPONSE.PRODUCT_DELETE_FAILED,
+      );
     }
   }
 

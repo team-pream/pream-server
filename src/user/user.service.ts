@@ -8,6 +8,7 @@ import { UpdateUserDto } from './dto/user-response.dto';
 import { UserPetRequestDto } from './dto/pet-response.dto';
 import { AwsService } from '~/aws/aws.service';
 import { PatchProfileRequestDto } from './dto/patch-profile.dto';
+import { ERROR_RESPONSE } from '~/errors/error';
 
 @Injectable()
 export class UserService {
@@ -19,7 +20,7 @@ export class UserService {
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
     const existingUser = await this.prisma.user.findUnique({ where: { id } });
     if (!existingUser) {
-      throw new BadRequestException({ errorCode: -836 });
+      throw new BadRequestException(ERROR_RESPONSE.INVALID_USER);
     }
 
     if (updateUserDto.email) {
@@ -30,7 +31,7 @@ export class UserService {
         },
       });
       if (emailExists) {
-        throw new BadRequestException({ errorCode: -837 });
+        throw new BadRequestException(ERROR_RESPONSE.DUPLICATED_EMAIL);
       }
     }
 
@@ -42,7 +43,7 @@ export class UserService {
         },
       });
       if (nicknameExists) {
-        throw new BadRequestException({ errorCode: -834 });
+        throw new BadRequestException(ERROR_RESPONSE.DUPLICATED_NICKNAME);
       }
     }
 
@@ -54,7 +55,7 @@ export class UserService {
         },
       });
       if (phoneExists) {
-        throw new BadRequestException({ errorCode: -838 });
+        throw new BadRequestException(ERROR_RESPONSE.DUPLICATED_PHONE);
       }
     }
 
@@ -90,7 +91,7 @@ export class UserService {
         },
       };
     } else {
-      throw new UnauthorizedException({ errorCode: -836 });
+      throw new UnauthorizedException(ERROR_RESPONSE.INVALID_USER);
     }
   }
 
@@ -108,7 +109,7 @@ export class UserService {
     });
 
     if (!existingUser) {
-      throw new UnauthorizedException({ errorCode: -836 });
+      throw new UnauthorizedException(ERROR_RESPONSE.INVALID_USER);
     }
 
     const existingPet = await this.prisma.pet.findUnique({
@@ -116,7 +117,9 @@ export class UserService {
     });
 
     if (existingPet) {
-      throw new BadRequestException({ errorCode: -839 });
+      throw new BadRequestException(
+        ERROR_RESPONSE.PET_ALREADY_EXIST_ONBOARDING,
+      );
     }
 
     const newPet = await this.prisma.pet.create({

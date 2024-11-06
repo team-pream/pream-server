@@ -25,7 +25,12 @@ export class JwtReIssueStrategy extends PassportStrategy(
       refreshToken,
     );
     if (!user) {
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new UnauthorizedException({
+        errorCode: -824,
+        title: '로그인 만료',
+        description:
+          '로그인 시간이 지나서 다시 로그인이 필요해요.\n로그인 해 주세요. ',
+      });
     }
     return user;
   }
