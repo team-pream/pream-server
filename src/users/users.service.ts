@@ -10,6 +10,7 @@ import { AwsService } from '~/aws/aws.service';
 import { PrismaService } from '~/prisma/prisma.service';
 import { PatchUsersAddressRequestDto } from './dto/me.dto';
 import { BankType } from './dto/profile.dto';
+import { ERROR_RESPONSE } from '~/errors/error';
 
 @Injectable()
 export class UsersService {
@@ -47,7 +48,7 @@ export class UsersService {
           : null,
       };
     } else {
-      throw new UnauthorizedException({ errorCode: -836 });
+      throw new UnauthorizedException(ERROR_RESPONSE.INVALID_USER);
     }
   }
 
@@ -72,7 +73,7 @@ export class UsersService {
         },
       });
     } catch {
-      throw new UnauthorizedException({ errorCode: -836 });
+      throw new UnauthorizedException(ERROR_RESPONSE.INVALID_USER);
     }
   }
 
@@ -86,11 +87,11 @@ export class UsersService {
     });
 
     if (isPetExists) {
-      throw new ConflictException({ errorCode: -842 });
+      throw new ConflictException(ERROR_RESPONSE.PET_ALREADY_EXISTS);
     }
 
     if (!data.petType || !data.name) {
-      throw new BadRequestException({ errorCode: -843 });
+      throw new BadRequestException(ERROR_RESPONSE.PET_REQUIRED_FIELD_MISSING);
     }
 
     let imageUrl = null;
@@ -133,7 +134,7 @@ export class UsersService {
     });
 
     if (!pet) {
-      throw new NotFoundException({ errorCode: -837 });
+      throw new NotFoundException(ERROR_RESPONSE.DUPLICATED_EMAIL);
     }
 
     let imageUrl = null;
@@ -168,7 +169,7 @@ export class UsersService {
     });
 
     if (!pet) {
-      throw new NotFoundException({ errorCode: -844 });
+      throw new NotFoundException(ERROR_RESPONSE.PET_DOES_NOT_EXIST);
     }
 
     try {
@@ -180,7 +181,7 @@ export class UsersService {
         message: '반려동물 프로필이 삭제되었습니다.',
       };
     } catch {
-      throw new UnauthorizedException({ errorCode: -836 });
+      throw new UnauthorizedException(ERROR_RESPONSE.INVALID_USER);
     }
   }
 
@@ -195,9 +196,9 @@ export class UsersService {
       patchUsersAddressRequestDto;
 
     if (!zonecode || !roadAddress || !jibunAddress || !detailAddress) {
-      throw new BadRequestException({
-        errorCode: -845,
-      });
+      throw new BadRequestException(
+        ERROR_RESPONSE.ADDRESS_REQUIRED_FIELD_MISSING,
+      );
     }
 
     const address = JSON.parse(JSON.stringify(patchUsersAddressRequestDto));
@@ -207,7 +208,7 @@ export class UsersService {
     });
 
     if (!existingUser) {
-      throw new NotFoundException({ errorCode: -825 });
+      throw new NotFoundException(ERROR_RESPONSE.INVALID_ACCESS_TOKEN);
     }
 
     const updatedUser = await this.prisma.user.update({

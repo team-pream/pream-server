@@ -16,6 +16,7 @@ import { KakaoUserDataDTO } from '~/auth/dto/kakao-user.dto';
 import { Response as ExpressResponse } from 'express';
 import { JwtAuthGuard } from './jwt/jwt-auth.guard';
 import { JwtRequest } from './dto/jwt-payload.dto';
+import { ERROR_RESPONSE } from '~/errors/error';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -86,9 +87,7 @@ export class AuthController {
     description: '유효하지 않은 사용자 - Access token이 유효하지 않거나 만료됨',
     content: {
       'application/json': {
-        example: {
-          errorCode: -825,
-        },
+        example: ERROR_RESPONSE.INVALID_ACCESS_TOKEN,
       },
     },
   })
@@ -101,7 +100,7 @@ export class AuthController {
       return res.sendStatus(200);
     }
 
-    return res.send({ errorCode: -825 });
+    return res.send(ERROR_RESPONSE.INVALID_ACCESS_TOKEN);
   }
 
   @ApiOperation({
@@ -129,9 +128,7 @@ export class AuthController {
     description: '유효하지 않거나 만료된 토큰',
     content: {
       'application/json': {
-        example: {
-          errorCode: -824,
-        },
+        example: ERROR_RESPONSE.INVALID_REFRESH_TOKEN,
       },
     },
   })

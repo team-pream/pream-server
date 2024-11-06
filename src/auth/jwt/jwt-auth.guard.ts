@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { ERROR_RESPONSE } from '~/errors/error';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -28,7 +29,10 @@ export class JwtAuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
-      throw new HttpException({ errorCode: -954 }, HttpStatus.UNAUTHORIZED);
+      throw new HttpException(
+        ERROR_RESPONSE.NO_AUTHORIZATION_HEADER,
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     try {
@@ -38,7 +42,10 @@ export class JwtAuthGuard implements CanActivate {
       request.user = { id: decoded.sub };
       return true;
     } catch {
-      throw new HttpException({ errorCode: -825 }, HttpStatus.UNAUTHORIZED);
+      throw new HttpException(
+        ERROR_RESPONSE.INVALID_ACCESS_TOKEN,
+        HttpStatus.UNAUTHORIZED,
+      );
     }
   }
 }

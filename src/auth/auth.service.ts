@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '~/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
+import { ERROR_RESPONSE } from '~/errors/error';
 
 @Injectable()
 export class AuthService {
@@ -80,7 +81,7 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
 
     if (!user || user.refreshToken !== refreshToken) {
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new UnauthorizedException(ERROR_RESPONSE.INVALID_REFRESH_TOKEN);
     }
     return user;
   }

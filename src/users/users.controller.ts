@@ -38,6 +38,7 @@ import {
   PostPetResponseDto,
 } from './dto/pet.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ERROR_RESPONSE } from '~/errors/error';
 
 @ApiTags('Users')
 @ApiHeader({
@@ -62,7 +63,7 @@ export class UsersController {
   @ApiResponse({
     status: 401,
     description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
-    example: { errorCode: -825 },
+    example: ERROR_RESPONSE.INVALID_ACCESS_TOKEN,
   })
   @Get('profile')
   async getUser(@Request() req: JwtRequest) {
@@ -85,7 +86,7 @@ export class UsersController {
   @ApiResponse({
     status: 401,
     description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
-    example: { errorCode: -825 },
+    example: ERROR_RESPONSE.INVALID_ACCESS_TOKEN,
   })
   @Patch('me')
   async updateUser(
@@ -117,17 +118,17 @@ export class UsersController {
   @ApiResponse({
     status: 401,
     description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
-    example: { errorCode: -825 },
+    example: ERROR_RESPONSE.INVALID_ACCESS_TOKEN,
   })
   @ApiResponse({
     status: 400,
     description: '필수 항목이 누락된 경우',
-    example: { errorCode: -843 },
+    example: ERROR_RESPONSE.PET_REQUIRED_FIELD_MISSING,
   })
   @ApiResponse({
     status: 409,
     description: '이미 등록된 반려동물이 있는 경우',
-    example: { errorCode: -842 },
+    example: ERROR_RESPONSE.PET_ALREADY_EXISTS,
   })
   @UseInterceptors(FileInterceptor('image'))
   @Post('pet')
@@ -156,7 +157,7 @@ export class UsersController {
   @ApiResponse({
     status: 401,
     description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
-    example: { errorCode: -825 },
+    example: ERROR_RESPONSE.INVALID_ACCESS_TOKEN,
   })
   @UseInterceptors(FileInterceptor('image'))
   @Patch('pet')
@@ -184,7 +185,7 @@ export class UsersController {
   @ApiResponse({
     status: 404,
     description: '삭제할 반려동물 프로필이 없는 경우',
-    example: { errorCode: -844 },
+    example: ERROR_RESPONSE.PET_DOES_NOT_EXIST,
   })
   @Delete('pet')
   async DeletePProfile(@Request() req: JwtRequest) {
@@ -208,21 +209,21 @@ export class UsersController {
   @ApiResponse({
     status: 400,
     description: '필수 항목이 누락된 경우',
-    example: { errorCode: -845 },
+    example: ERROR_RESPONSE.ADDRESS_REQUIRED_FIELD_MISSING,
   })
   @ApiResponse({
     status: 401,
     description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
-    example: { errorCode: -825 },
+    example: ERROR_RESPONSE.INVALID_ACCESS_TOKEN,
   })
   @UsePipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
       exceptionFactory: () => {
-        return new BadRequestException({
-          errorCode: -845,
-        });
+        return new BadRequestException(
+          ERROR_RESPONSE.ADDRESS_REQUIRED_FIELD_MISSING,
+        );
       },
     }),
   )
