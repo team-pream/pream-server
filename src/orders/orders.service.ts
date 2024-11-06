@@ -55,11 +55,13 @@ export class OrdersService {
       throw new NotAcceptableException(ERROR_RESPONSE.INVALID_ORDER_PRODUCT_ID);
     }
 
-    const orderSheet = await this.prisma.order.upsert({
+    const orderSheet = await this.prisma.tempOrder.upsert({
       where: {
-        userId_productId: {
+        userId_productId_status_paymentStatus: {
           userId,
           productId,
+          status: 'PAYMENT_PENDING',
+          paymentStatus: 'READY',
         },
       },
       update: {

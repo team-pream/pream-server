@@ -26,6 +26,7 @@ model User {
   orders       Order[]
   pet          Pet?
   products     Product[]
+  TempOrder    TempOrder[]
 }
 
 model Pet {
@@ -67,6 +68,7 @@ model Product {
   orders      Order[]
   category    Category             @relation(fields: [categoryId], references: [id])
   seller      User                 @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  TempOrder   TempOrder[]
 }
 
 model Order {
@@ -85,7 +87,27 @@ model Order {
   product         Product           @relation(fields: [productId], references: [id])
   user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, productId])
+  @@unique([userId, productId, status, paymentStatus])
+  @@index([userId, productId])
+}
+
+model TempOrder {
+  id              String            @id @default(uuid())
+  userId          String
+  receiverName    String?
+  paymentAmount   Int
+  status          OrderStatusType
+  paymentStatus   PaymentStatusType
+  paymentMethod   PaymentMethodType
+  shippingAddress Json?
+  phone           String
+  productId       Int
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  product         Product           @relation(fields: [productId], references: [id])
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId, status, paymentStatus])
   @@index([userId, productId])
 }
 
@@ -163,7 +185,7 @@ enum PaymentMethodType {
 
 enum PaymentStatusType {
   READY
-  IN_PROGRESS 
+  IN_PROGRESS
   WAITING_FOR_DEPOSIT
   DONE
   CANCELED
