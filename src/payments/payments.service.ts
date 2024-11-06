@@ -46,8 +46,6 @@ export class PaymentsService {
     const { id: tempOrderId, paymentAmount: tempPaymentAmount } =
       tempOrderSheet;
 
-    console.log(response.data, tempPaymentAmount);
-
     if (response.data.orderId !== tempOrderId) {
       throw new BadRequestException(ERROR_RESPONSE.INVALID_ORDER_ID);
     }
@@ -72,24 +70,34 @@ export class PaymentsService {
       paymentMethod = response.data.method;
     }
 
-    return {
-      status: response.status,
+    const newOrder = await this.prisma.order.create({
       data: {
-        orderId: response.data.orderId,
-        orderName: response.data.orderName,
-        approvedAt: response.data.approvedAt,
-        discount: response.data.discount,
-        cancels: response.data.cancels,
-        country: response.data.country,
-        failure: response.data.failure,
-        isPartialCancelable: response.data.isPartialCancelable,
-        currency: response.data.currency,
-        totalAmount: response.data.totalAmount,
-        balanceAmount: response.data.balanceAmount,
-        suppliedAmount: response.data.suppliedAmount,
-        vat: response.data.vat,
-        taxFreeAmount: response.data.taxFreeAmount,
-        paymentMethod,
+        userId: tempOrderSheet.userId,
+        receiverName: tempOrderSheet.receiverName,
+        paymentAmount: tempOrderSheet.paymentAmount,
+        status: 'PAYMENT_COMPLETED',
+        paymentStatus: 'DONE',
+        paymentMethod: tempOrderSheet.paymentMethod,
+        shippingAddress: tempOrderSheet.shippingAddress,
+        phone: tempOrderSheet.phone,
+        productId: tempOrderSheet.productId,
+      },
+    });
+
+    const product = await this.prisma.product.update({
+      where: { id: tempOrderSheet.productId },
+      data: { status: 'RESERVED' },
+    });
+
+    return {
+      ...newOrder,
+      paymentMethod,
+      product: {
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        status: product.status,
+        images: product.images,
       },
     };
   }

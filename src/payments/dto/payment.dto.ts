@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import { PaymentCancelDto } from './payment-cancel.dto';
 
 export class TossPaymentsRequestDto {
   @IsNotEmpty()
@@ -27,113 +26,90 @@ export class Failure {
   message: string;
 }
 
+class ShippingAddressDto {
+  @ApiProperty({
+    description: '도로명 주소',
+    example: '경기 성남시 분당구 판교역로 166',
+  })
+  roadAddress: string;
+
+  @ApiProperty({ description: '상세 주소', example: '상세 주소' })
+  detailAddress: string;
+}
+
+class ProductDto {
+  @ApiProperty({ description: '상품 ID', example: 137879392 })
+  id: number;
+
+  @ApiProperty({
+    description: '상품 제목',
+    example: '강아지장난감 애견훈련 노즈워크',
+  })
+  title: string;
+
+  @ApiProperty({ description: '상품 가격', example: 10000 })
+  price: number;
+
+  @ApiProperty({ description: '상품 상태', example: 'RESERVED' })
+  status: string;
+
+  @ApiProperty({
+    description: '상품 이미지',
+    example: ['https://images.com/example'],
+    isArray: true,
+  })
+  images: string[];
+}
+
 export class TossPaymentSuccessResponseDto {
   @ApiProperty({
-    example: '4d381eb6eb8',
-    description: '주문번호',
-    required: true,
+    description: '주문 ID',
+    example: 'c416aa767f',
   })
-  orderId: string;
+  id: string;
 
   @ApiProperty({
-    example: '강아지 훈련용 장난감',
-    description: '주문한 상품의 이름',
-    required: true,
+    description: '사용자 ID',
+    example: '4923c34b',
   })
-  orderName: string;
+  userId: string;
 
-  @ApiProperty({
-    example: '2024-11-07T00:46:08+09:00',
-    description: '결제 승인 시간',
-    required: true,
-    nullable: true,
-  })
-  approvedAt: Date;
+  @ApiProperty({ description: '수령인 이름', example: '김프림' })
+  receiverName: string;
 
-  @ApiProperty({
-    example: null,
-    description: '할인 금액',
-    required: true,
-    nullable: true,
-  })
-  discount: number | null;
+  @ApiProperty({ description: '결제 금액', example: 10000 })
+  paymentAmount: number;
 
-  @ApiProperty({
-    example: null,
-    description: '결제 취소 이력',
-    required: true,
-    nullable: true,
-  })
-  cancels: PaymentCancelDto | null;
+  @ApiProperty({ description: '주문 상태', example: 'PAYMENT_COMPLETED' })
+  status: string;
 
-  @ApiProperty({
-    example: false,
-    description: '부분 취소 가능 여부',
-    required: true,
-  })
-  isPartialCancelable: boolean;
+  @ApiProperty({ description: '결제 상태', example: 'DONE' })
+  paymentStatus: string;
 
-  @ApiProperty({
-    example: 'KR',
-    description: '결제한 국가',
-    required: true,
-  })
-  country: string;
-
-  @ApiProperty({
-    example: null,
-    description: '결제 승인 실패 사유',
-    required: true,
-    nullable: true,
-  })
-  failure: Failure | null;
-
-  @ApiProperty({
-    example: 'KRW',
-    description: '결제 시 사용한 통화',
-    required: true,
-  })
-  currency: string;
-
-  @ApiProperty({
-    example: 4000,
-    description: '총 결제 금액',
-    required: true,
-  })
-  totalAmount: number;
-
-  @ApiProperty({
-    example: 4000,
-    description: '취소할 수 있는 금액',
-    required: true,
-  })
-  balanceAmount: number;
-
-  @ApiProperty({
-    example: 3636,
-    description: '공급가액',
-    required: true,
-  })
-  suppliedAmount: number;
-
-  @ApiProperty({
-    example: 3640,
-    description: '부가세',
-    required: true,
-  })
-  vat: number;
-
-  @ApiProperty({
-    example: 0,
-    description: '결제 금액 중 면세 금액',
-    required: true,
-  })
-  taxFreeAmount: number;
-
-  @ApiProperty({
-    example: 10000,
-    description: '결제 수단',
-    required: true,
-  })
+  @ApiProperty({ description: '결제 방법', example: '토스페이' })
   paymentMethod: string;
+
+  @ApiProperty({ description: '배송 주소', type: ShippingAddressDto })
+  shippingAddress: ShippingAddressDto;
+
+  @ApiProperty({ description: '전화번호', example: '01012345678' })
+  phone: string;
+
+  @ApiProperty({ description: '상품 ID', example: 13392 })
+  productId: number;
+
+  @ApiProperty({
+    description: '주문 생성 날짜',
+    example: '2024-11-06T17:43:29.333Z',
+  })
+  createdAt: string;
+
+  @ApiProperty({
+    description: '주문 수정 날짜',
+    example: '2024-11-06T17:43:29.333Z',
+  })
+  updatedAt: string;
+
+  @ApiProperty({ description: '주문한 상품 정보', type: ProductDto })
+  product: ProductDto;
 }
