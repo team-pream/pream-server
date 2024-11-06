@@ -95,4 +95,16 @@ export const ERROR_RESPONSE = {
     title: '삭제 실패',
     description: '상품 삭제 중 문제가 발생했어요.\n잠시 후 다시 시도해 주세요.',
   },
+
+  /* Order */
+  ORDER_REQUIRED_FIELD_MISSING: {
+    errorCode: -910,
+    title: '주문 정보 누락',
+    description: '주문 정보를 모두 입력해 주세요.',
+  },
+  INVALID_ORDER_PRODUCT_ID: {
+    errorCode: -911,
+    title: '상품 정보 없음',
+    description: '존재하지 않는 상품이에요.\n상품 정보를 다시 확인해 주세요.',
+  },
 } as const;

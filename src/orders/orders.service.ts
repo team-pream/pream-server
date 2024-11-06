@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '~/prisma/prisma.service';
 import { PostOrdersProductRequestDto } from './dto/post-orders.dto';
+import { ERROR_RESPONSE } from '~/errors/error';
 
 @Injectable()
 export class OrdersService {
@@ -35,9 +36,9 @@ export class OrdersService {
       !shippingAddress ||
       !phone
     ) {
-      throw new BadRequestException({
-        errorCode: -910,
-      });
+      throw new BadRequestException(
+        ERROR_RESPONSE.ORDER_REQUIRED_FIELD_MISSING,
+      );
     }
 
     const address = JSON.parse(JSON.stringify(shippingAddress));
@@ -51,9 +52,7 @@ export class OrdersService {
     });
 
     if (!product || product.status !== 'AVAILABLE') {
-      throw new NotAcceptableException({
-        errorCode: -911,
-      });
+      throw new NotAcceptableException(ERROR_RESPONSE.INVALID_ORDER_PRODUCT_ID);
     }
 
     const orderSheet = await this.prisma.order.upsert({

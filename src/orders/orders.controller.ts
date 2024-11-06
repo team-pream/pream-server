@@ -20,6 +20,7 @@ import {
   PostOrderProductResponseDto,
   PostOrdersProductRequestDto,
 } from './dto/post-orders.dto';
+import { ERROR_RESPONSE } from '~/errors/error';
 
 @ApiTags('Orders')
 @ApiHeader({
@@ -47,17 +48,17 @@ export class OrdersController {
   @ApiResponse({
     status: 401,
     description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
-    example: { errorCode: -825 },
+    example: ERROR_RESPONSE.INVALID_ACCESS_TOKEN,
   })
   @ApiResponse({
     status: 400,
     description: '필수 요청 값이 누락된 경우',
-    example: { errorCode: -910 },
+    example: ERROR_RESPONSE.ORDER_REQUIRED_FIELD_MISSING,
   })
   @ApiResponse({
     status: 406,
     description: '유효하지 않은 상품 ID인 경우',
-    example: { errorCode: -911 },
+    example: ERROR_RESPONSE.INVALID_ORDER_PRODUCT_ID,
   })
   @Post(':productId')
   async postOrdersProduct(
