@@ -107,4 +107,18 @@ export const ERROR_RESPONSE = {
     title: '상품 정보 없음',
     description: '존재하지 않는 상품이에요.\n상품 정보를 다시 확인해 주세요.',
   },
+
+  /* Payment */
+  INVALID_ORDER_ID: {
+    errorCode: -920,
+    title: '주문 정보 없음',
+    description:
+      '존재하지 않는 주문 정보에요.\n주문 정보를 다시 확인해 주세요.',
+  },
+  INVALID_PAYMENT_AMOUNT: {
+    errorCode: -921,
+    title: '결제 금액 오류',
+    description:
+      '결제 금액이 올바르지 않아요.\n결제 금액을 다시 확인해 주세요.',
+  },
 } as const;

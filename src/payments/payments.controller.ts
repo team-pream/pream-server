@@ -1,9 +1,19 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
-import { ApiHeader, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post, UseFilters, UseGuards } from '@nestjs/common';
+import {
+  ApiBody,
+  ApiHeader,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { PaymentsService } from './payments.service';
 import { JwtAuthGuard } from '~/auth/jwt/jwt-auth.guard';
-import { TossPaymentDto } from './dto/payment.dto';
-import { Response } from 'express';
+import { ERROR_RESPONSE } from '~/errors/error';
+import {
+  TossPaymentsRequestDto,
+  TossPaymentSuccessResponseDto,
+} from './dto/payment.dto';
+import { TossPaymentsConfirmFilter } from './filter/payments-confirm.filter';
 
 @ApiTags('Payments')
 @ApiHeader({
@@ -12,17 +22,30 @@ import { Response } from 'express';
   required: true,
 })
 @UseGuards(JwtAuthGuard)
+@UseFilters(TossPaymentsConfirmFilter)
 @Controller('payments')
 export class PaymentsController {
   constructor(private paymentsService: PaymentsService) {}
 
-  @Get('/success')
-  success(@Res() res: Response) {
-    return res.send(200);
-  }
-
-  @Post('/toss')
-  tossPayments(@Body() tossPaymentDto: TossPaymentDto) {
-    return this.paymentsService.tossPayment(tossPaymentDto);
+  @ApiOperation({
+    summary: '결제 승인',
+    description: '결제 요청 후 결제 승인을 요청합니다.',
+  })
+  @ApiBody({
+    type: TossPaymentsRequestDto,
+  })
+  @ApiResponse({
+    status: 201,
+    description: '결제 승인',
+    type: TossPaymentSuccessResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
+    example: ERROR_RESPONSE.INVALID_ACCESS_TOKEN,
+  })
+  @Post('toss')
+  tossPayments(@Body() tossPaymentsDto: TossPaymentsRequestDto) {
+    return this.paymentsService.tossPayment(tossPaymentsDto);
   }
 }
