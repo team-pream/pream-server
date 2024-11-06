@@ -21,6 +21,7 @@ import {
   PostOrdersProductRequestDto,
 } from './dto/post-orders.dto';
 import { ERROR_RESPONSE } from '~/errors/error';
+import { PostOrdersProductCancelRequestDto } from './dto/cancel-orders.dto';
 
 @ApiTags('Orders')
 @ApiHeader({
@@ -72,6 +73,39 @@ export class OrdersController {
       userId,
       productId: Number(productId),
       postOrdersRequest,
+    });
+  }
+
+  @ApiOperation({
+    summary: '주문 취소',
+    description:
+      '상품 구매 후 구매확정을 하지 않고 1주일이 지나지 않았을 경우 취소합니다.',
+  })
+  @ApiBody({
+    type: PostOrdersProductCancelRequestDto,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '주문 취소 성공',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
+    example: ERROR_RESPONSE.INVALID_ACCESS_TOKEN,
+  })
+  @Post(':orderId/cancel')
+  async postOrdersProductCancel(
+    @Param('orderId') orderId: string,
+    @Body()
+    postOrdersProductCancelRequest: PostOrdersProductCancelRequestDto,
+    @Request()
+    req: JwtRequest,
+  ) {
+    const userId = req.user?.id;
+    return this.ordersService.postOrdersProductCancel({
+      userId,
+      orderId,
+      postOrdersProductCancelRequest,
     });
   }
 }

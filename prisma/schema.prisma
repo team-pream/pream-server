@@ -81,6 +81,7 @@ model Order {
   paymentMethod   PaymentMethodType
   shippingAddress Json?
   phone           String
+  paymentKey      String?
   productId       Int
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt

@@ -78,6 +78,7 @@ export class PaymentsService {
         status: 'PAYMENT_COMPLETED',
         paymentStatus: 'DONE',
         paymentMethod: tempOrderSheet.paymentMethod,
+        paymentKey: response.data.paymentKey,
         shippingAddress: tempOrderSheet.shippingAddress,
         phone: tempOrderSheet.phone,
         productId: tempOrderSheet.productId,

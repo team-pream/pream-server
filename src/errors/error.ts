@@ -121,4 +121,14 @@ export const ERROR_RESPONSE = {
     description:
       '결제 금액이 올바르지 않아요.\n결제 금액을 다시 확인해 주세요.',
   },
+  NO_PERMISSION_TO_CANCEL_ORDER: {
+    errorCode: -922,
+    title: '취소 권한 없음',
+    description: '주문을 취소할 권한이 없어요.',
+  },
+  CANCEL_AVAILABLE_PERIOD_EXPIRED: {
+    errorCode: -923,
+    title: '취소 기간 경과',
+    description: '주문 취소 기간이 지나 취소할 수 없어요.',
+  },
 } as const;
