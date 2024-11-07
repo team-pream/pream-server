@@ -132,4 +132,50 @@ export class OrdersService {
 
     return updatedProduct;
   }
+
+  async getOrders({ userId }: { userId: string }) {
+    const orders = await this.prisma.order.findMany({
+      where: { userId },
+      include: { product: true },
+    });
+
+    const oneWeekInMs = 7 * 24 * 60 * 60 * 1000; // 일주일
+    const currentTime = new Date();
+
+    const orderSheet = orders.map((order) => {
+      const isOneWeekOld =
+        currentTime.getTime() - order.createdAt.getTime() > oneWeekInMs;
+
+      if (isOneWeekOld) {
+        this.prisma.product.update({
+          where: { id: order.product.id },
+          data: { status: 'SOLD_OUT' },
+        });
+      }
+
+      return {
+        id: order.id,
+        receiverName: order.receiverName,
+        paymentAmount: order.paymentAmount,
+        status: order.status,
+        paymentStatus: order.paymentStatus,
+        paymentMethod: order.paymentMethod,
+        shippingAddress: order.shippingAddress,
+        phone: order.phone,
+        product: {
+          id: order.product.id,
+          title: order.product.title,
+          price: order.product.price,
+          status: order.product.status,
+          images: order.product.images,
+        },
+        isCancelable: !isOneWeekOld,
+        isConfirmed: isOneWeekOld,
+        createdAt: order.createdAt,
+        updatedAt: order.updatedAt,
+      };
+    });
+
+    return orderSheet;
+  }
 }

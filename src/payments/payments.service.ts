@@ -7,11 +7,6 @@ import {
 import { PrismaService } from '~/prisma/prisma.service';
 import { TossPaymentsRequestDto } from './dto/payment.dto';
 import { ERROR_RESPONSE } from '~/errors/error';
-import {
-  CardIssuerCode,
-  CardIssuerName,
-  PAYMENT_METHODS,
-} from '~/constants/payment';
 import { PostPaymentsOrderCancelRequestDto } from './dto/cancel-orders.dto';
 import { v4 as uuid } from 'uuid';
 
@@ -63,18 +58,6 @@ export class PaymentsService {
       throw new BadRequestException(ERROR_RESPONSE.INVALID_PAYMENT_AMOUNT);
     }
 
-    let paymentMethod = '정보 없음';
-    const method = response.data.method;
-
-    if (method === PAYMENT_METHODS.CARD) {
-      const issuerCode: CardIssuerCode = response.data.card.issuerCode;
-      paymentMethod = CardIssuerName[issuerCode];
-    } else if (method === PAYMENT_METHODS.EASY_PAY) {
-      paymentMethod = response.data.easyPay.provider;
-    } else {
-      paymentMethod = method;
-    }
-
     const newOrder = await this.prisma.order.create({
       data: {
         userId: tempOrderSheet.userId,
@@ -97,7 +80,6 @@ export class PaymentsService {
 
     return {
       ...newOrder,
-      paymentMethod,
       product: {
         id: product.id,
         title: product.title,
