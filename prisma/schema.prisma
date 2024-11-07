@@ -72,21 +72,22 @@ model Product {
 }
 
 model Order {
-  id              String            @id @default(uuid())
-  userId          String
-  receiverName    String?
-  paymentAmount   Int
-  status          OrderStatusType
-  paymentStatus   PaymentStatusType
-  paymentMethod   PaymentMethodType
-  shippingAddress Json?
-  phone           String
-  paymentKey      String?
-  productId       Int
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  product         Product           @relation(fields: [productId], references: [id])
-  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                      String            @id @default(uuid())
+  userId                  String
+  receiverName            String?
+  paymentAmount           Int
+  status                  OrderStatusType
+  paymentStatus           PaymentStatusType
+  paymentMethod           PaymentMethodType
+  detailPaymentMethod     String?
+  shippingAddress         Json?
+  phone                   String
+  paymentKey              String?
+  productId               Int
+  createdAt               DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
+  product                 Product           @relation(fields: [productId], references: [id])
+  user                    User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId, status, paymentStatus])
   @@index([userId, productId])
