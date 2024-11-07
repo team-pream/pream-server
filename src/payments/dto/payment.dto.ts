@@ -94,6 +94,13 @@ export class TossPaymentSuccessResponseDto {
   })
   paymentMethod: PaymentMethodType;
 
+  @ApiProperty({
+    description: '상세 결제 수단',
+    example: '토스페이',
+    nullable: true,
+  })
+  detailPaymentMethod?: string;
+
   @ApiProperty({ description: '배송 주소', type: ShippingAddressDto })
   shippingAddress: ShippingAddressDto;
 
