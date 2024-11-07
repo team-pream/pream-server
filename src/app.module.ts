@@ -3,7 +3,6 @@ import { AppController } from '~/app.controller';
 import { AppService } from '~/app.service';
 import { AuthModule } from '~/auth/auth.module';
 import { CategoryModule } from '~/categories/category.module';
-import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { ProductModule } from './products/product.module';
 import { AwsModule } from './aws/aws.module';
@@ -19,7 +18,6 @@ import { PaymentsModule } from './payments/payments.module';
     }),
     AuthModule,
     CategoryModule,
-    UserModule,
     ProductModule,
     AwsModule,
     UsersModule,

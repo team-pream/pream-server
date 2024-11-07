@@ -10,8 +10,8 @@ import { ERROR_RESPONSE } from '~/errors/error';
 import { PostPaymentsOrderCancelRequestDto } from './dto/cancel-orders.dto';
 import { v4 as uuid } from 'uuid';
 import {
-  CardIssuerCode,
-  CardIssuerName,
+  CARD_ISSUER_CODE,
+  CARD_ISSUER_NAME,
   PAYMENT_METHODS,
 } from '~/constants/payment';
 
@@ -66,8 +66,8 @@ export class PaymentsService {
     let paymentMethod = '정보 없음';
     const method = response.data.method;
     if (method === PAYMENT_METHODS.CARD) {
-      const issuerCode: CardIssuerCode = response.data.card.issuerCode;
-      paymentMethod = CardIssuerName[issuerCode];
+      const issuerCode: CARD_ISSUER_CODE = response.data.card.issuerCode;
+      paymentMethod = CARD_ISSUER_NAME[issuerCode];
     } else if (method === PAYMENT_METHODS.EASY_PAY) {
       paymentMethod = response.data.easyPay.provider;
     } else {

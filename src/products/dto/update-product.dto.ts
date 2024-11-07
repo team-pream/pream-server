@@ -62,7 +62,7 @@ export class PatchProductsDetailDto {
   contact?: string;
 
   @ApiProperty({
-    example: { bank: 'WR', accountNumber: '300000000000' },
+    example: `{ bank: 'WR', accountNumber: '300000000000' }`,
     description: '판매정산계좌 - JSON 형식으로 전달받습니다.',
     required: false,
   })

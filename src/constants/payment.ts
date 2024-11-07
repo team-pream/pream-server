@@ -1,6 +1,6 @@
-export type CardIssuerCode = keyof typeof CardIssuerName;
+export type CARD_ISSUER_CODE = keyof typeof CARD_ISSUER_NAME;
 
-export const CardIssuerName = {
+export const CARD_ISSUER_NAME = {
   '3K': '기업BC',
   '46': '광주은행',
   '71': '롯데카드',

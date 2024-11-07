@@ -8,7 +8,7 @@ import {
 import { PetType } from '@prisma/client';
 import { AwsService } from '~/aws/aws.service';
 import { PrismaService } from '~/prisma/prisma.service';
-import { PatchUsersAddressRequestDto } from './dto/me.dto';
+import { PatchUserOnboarding, PatchUsersAddressRequestDto } from './dto/me.dto';
 import { BankType } from './dto/profile.dto';
 import { ERROR_RESPONSE } from '~/errors/error';
 
@@ -18,6 +18,62 @@ export class UsersService {
     private prisma: PrismaService,
     private awsService: AwsService,
   ) {}
+
+  async patchUsersOnboarding(id: string, updateUserDto: PatchUserOnboarding) {
+    const existingUser = await this.prisma.user.findUnique({ where: { id } });
+    if (!existingUser) {
+      throw new BadRequestException(ERROR_RESPONSE.INVALID_USER);
+    }
+
+    if (updateUserDto.email) {
+      const emailExists = await this.prisma.user.findFirst({
+        where: {
+          email: updateUserDto.email,
+          id: { not: id },
+        },
+      });
+      if (emailExists) {
+        throw new BadRequestException(ERROR_RESPONSE.DUPLICATED_EMAIL);
+      }
+    }
+
+    if (updateUserDto.nickname) {
+      const nicknameExists = await this.prisma.user.findFirst({
+        where: {
+          nickname: updateUserDto.nickname,
+          id: { not: id },
+        },
+      });
+      if (nicknameExists) {
+        throw new BadRequestException(ERROR_RESPONSE.DUPLICATED_NICKNAME);
+      }
+    }
+
+    if (updateUserDto.phone) {
+      const phoneExists = await this.prisma.user.findFirst({
+        where: {
+          phone: updateUserDto.phone,
+          id: { not: id },
+        },
+      });
+      if (phoneExists) {
+        throw new BadRequestException(ERROR_RESPONSE.DUPLICATED_PHONE);
+      }
+    }
+
+    return this.prisma.user.update({
+      where: { id },
+      data: updateUserDto,
+    });
+  }
+
+  async checkNicknameAvailability(nickname: string): Promise<boolean> {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { nickname },
+    });
+
+    return !existingUser;
+  }
 
   async getUsersProfile(id: string) {
     const profile = await this.prisma.user.findUnique({
