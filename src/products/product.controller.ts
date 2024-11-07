@@ -74,7 +74,7 @@ export class ProductController {
   })
   @ApiQuery({
     name: 'status',
-    description: '상품 상태<br/>AVAILABLE: 1, SOLD_OUT: 2',
+    description: '상품 상태<br/>AVAILABLE: 1, SOLD_OUT: 2, RESERVED: 3',
     required: false,
   })
   @ApiResponse({

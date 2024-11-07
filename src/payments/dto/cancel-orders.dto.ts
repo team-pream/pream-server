@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class PostOrdersProductCancelRequestDto {
+export class PostPaymentsOrderCancelRequestDto {
   @ApiProperty({
     example: '사용자 취소',
     description: '취소 사유',

@@ -131,4 +131,14 @@ export const ERROR_RESPONSE = {
     title: '취소 기간 경과',
     description: '주문 취소 기간이 지나 취소할 수 없어요.',
   },
+  NO_PERMISSION_TO_CONFIRM_ORDER: {
+    errorCode: -924,
+    title: '확정 권한 없음',
+    description: '주문을 확정할 권한이 없어요.',
+  },
+  NO_STATUS_TO_CONFIRM_ORDER: {
+    errorCode: -925,
+    title: '확정 불가',
+    description: '주문을 확정할 수 없는 상태예요.',
+  },
 } as const;

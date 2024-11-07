@@ -5,7 +5,7 @@ import { AuthModule } from '~/auth/auth.module';
 import { CategoryModule } from '~/categories/category.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
-import { ProductModule } from './product/product.module';
+import { ProductModule } from './products/product.module';
 import { AwsModule } from './aws/aws.module';
 import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
