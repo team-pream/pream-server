@@ -137,6 +137,9 @@ export class OrdersService {
     const orders = await this.prisma.order.findMany({
       where: { userId },
       include: { product: true },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     const oneWeekInMs = 7 * 24 * 60 * 60 * 1000; // 일주일
