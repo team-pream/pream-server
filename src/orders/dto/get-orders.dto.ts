@@ -1,4 +1,3 @@
-// src/order/dto/order-response.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsDate, IsInt, IsString } from 'class-validator';
 import { OrderStatusType, PaymentStatusType } from '@prisma/client';
