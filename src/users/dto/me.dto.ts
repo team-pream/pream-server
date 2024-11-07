@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsPhoneNumber,
   IsString,
   IsUUID,
@@ -114,4 +115,41 @@ export class PatchMeRequestDto {
   })
   @IsString()
   bankAccount?: { bank: BankType; accountNumber: string };
+}
+
+export class PatchUserOnboarding {
+  @ApiProperty({
+    example: '두부 집사',
+    description: '유저 닉네임 (최소 2자, 최대 20자)',
+  })
+  @IsOptional()
+  @IsString()
+  @Length(2, 20)
+  nickname?: string;
+
+  @ApiProperty({
+    example: 'team0pream@gmail.com',
+    description: '유저 이메일',
+  })
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @ApiProperty({
+    example: '010-0000-0000',
+    description: '유저 휴대폰 번호',
+  })
+  @IsOptional()
+  @IsPhoneNumber('KR')
+  phone?: string;
+}
+
+export class NicknameDto {
+  @ApiProperty({
+    example: '두부 집사',
+    description: '사용하려는 닉네임 (최소 2자, 최대 20자)',
+  })
+  @IsString()
+  @Length(2, 20)
+  nickname: string;
 }

@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsString, IsInt, IsEnum, IsArray } from 'class-validator';
 import { ProductConditionType } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
+import { BankAccount } from '~/users/dto/profile.dto';
 
 export class PostProductsUploadDto {
   @IsString()
@@ -40,6 +41,12 @@ export class PostProductsUploadDto {
     ],
   })
   images: string[];
+
+  @ApiProperty({
+    example: { bank: 'KB', accountNumber: '300000000000' },
+    description: '판매정산계좌',
+  })
+  bankAccount: BankAccount | null;
 
   @IsString()
   @IsNotEmpty()
