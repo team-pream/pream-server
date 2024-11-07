@@ -122,7 +122,7 @@ export class OrdersService {
     }
 
     if (order.product.status !== 'RESERVED') {
-      throw new ForbiddenException(ERROR_RESPONSE.NO_STATUS_TO_CONFIRM_ORDER);
+      throw new BadRequestException(ERROR_RESPONSE.NO_STATUS_TO_CONFIRM_ORDER);
     }
 
     const updatedProduct = await this.prisma.product.update({

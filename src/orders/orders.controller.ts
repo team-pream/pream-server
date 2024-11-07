@@ -88,9 +88,19 @@ export class OrdersController {
     description: '구매 확정 성공',
   })
   @ApiResponse({
+    status: 400,
+    description: '상품이 예약 중 상태가 아닐 때',
+    example: ERROR_RESPONSE.NO_STATUS_TO_CONFIRM_ORDER,
+  })
+  @ApiResponse({
     status: 401,
     description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
     example: ERROR_RESPONSE.INVALID_ACCESS_TOKEN,
+  })
+  @ApiResponse({
+    status: 403,
+    description: '구매 확정 권한이 없을 때',
+    example: ERROR_RESPONSE.NO_PERMISSION_TO_CONFIRM_ORDER,
   })
   @Post(':orderId/confirm')
   async postOrdersOrderConfirm(
