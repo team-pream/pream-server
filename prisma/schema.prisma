@@ -26,6 +26,7 @@ model User {
   orders       Order[]
   pet          Pet?
   products     Product[]
+  TempOrder    TempOrder[]
 }
 
 model Pet {
@@ -67,15 +68,39 @@ model Product {
   orders      Order[]
   category    Category             @relation(fields: [categoryId], references: [id])
   seller      User                 @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  TempOrder   TempOrder[]
 }
 
 model Order {
-  id              Int               @id @default(autoincrement())
+  id              String            @id @default(uuid())
   userId          String
-  status          OrderStatusType
+  receiverName    String?
   paymentAmount   Int
+  status          OrderStatusType
+  paymentStatus   PaymentStatusType
   paymentMethod   PaymentMethodType
-  shippingAddress String
+  shippingAddress Json?
+  phone           String
+  paymentKey      String?
+  productId       Int
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  product         Product           @relation(fields: [productId], references: [id])
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId, status, paymentStatus])
+  @@index([userId, productId])
+}
+
+model TempOrder {
+  id              String            @id @default(uuid())
+  userId          String
+  receiverName    String?
+  paymentAmount   Int
+  status          OrderStatusType
+  paymentStatus   PaymentStatusType
+  paymentMethod   PaymentMethodType
+  shippingAddress Json?
   phone           String
   productId       Int
   createdAt       DateTime          @default(now())
@@ -83,6 +108,7 @@ model Order {
   product         Product           @relation(fields: [productId], references: [id])
   user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, productId, status, paymentStatus])
   @@index([userId, productId])
 }
 
@@ -151,12 +177,20 @@ enum OrderStatusType {
 
 enum PaymentMethodType {
   CARD
+  TRANSFER
   VIRTUAL_ACCOUNT
-  SIMPLE_PAYMENT
-  MOBILE
-  BANK_TRANSFER
-  CULTURE_GIFT_CARD
-  BOOK_GIFT_CARD
-  GAME_GIFT_CARD
-  INTL_SIMPLE_PAYMENT
+  MOBILE_PHONE
+  CULTURE_GIFT_CERTIFICATE
+  FOREIGN_EASY_PAY
+}
+
+enum PaymentStatusType {
+  READY
+  IN_PROGRESS
+  WAITING_FOR_DEPOSIT
+  DONE
+  CANCELED
+  PARTIAL_CANCELED
+  ABORTED
+  EXPIRED
 }

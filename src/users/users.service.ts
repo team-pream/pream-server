@@ -192,10 +192,9 @@ export class UsersService {
     userId: string;
     patchUsersAddressRequestDto: PatchUsersAddressRequestDto;
   }) {
-    const { zonecode, roadAddress, jibunAddress, detailAddress } =
-      patchUsersAddressRequestDto;
+    const { roadAddress, detailAddress } = patchUsersAddressRequestDto;
 
-    if (!zonecode || !roadAddress || !jibunAddress || !detailAddress) {
+    if (!roadAddress || !detailAddress) {
       throw new BadRequestException(
         ERROR_RESPONSE.ADDRESS_REQUIRED_FIELD_MISSING,
       );

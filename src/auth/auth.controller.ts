@@ -93,7 +93,10 @@ export class AuthController {
   })
   @UseGuards(JwtAuthGuard)
   @Get('status')
-  async getStatus(@Request() req: any, @Response() res: ExpressResponse) {
+  async getStatus(
+    @Request() req: JwtRequest,
+    @Response() res: ExpressResponse,
+  ) {
     const { user } = req;
 
     if (user) {

@@ -80,9 +80,7 @@ export class GetProfileResponseDto {
 
   @ApiProperty({
     example: {
-      zonecode: '06192',
       roadAddress: '서울 강남구 선릉로 428',
-      jibunAddress: '서울 강남구 대치동 889-41',
       detailAddress: '멀티캠퍼스 선릉 4층 401호',
     },
     description: '사용자 주소',
