@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { PaymentMethodType } from '@prisma/client';
 import { IsNotEmpty } from 'class-validator';
 
 export class TossPaymentsRequestDto {
@@ -86,8 +87,12 @@ export class TossPaymentSuccessResponseDto {
   @ApiProperty({ description: '결제 상태', example: 'DONE' })
   paymentStatus: string;
 
-  @ApiProperty({ description: '결제 방법', example: '토스페이' })
-  paymentMethod: string;
+  @ApiProperty({
+    description: '결제 수단',
+    example: PaymentMethodType.CARD,
+    enum: PaymentMethodType,
+  })
+  paymentMethod: PaymentMethodType;
 
   @ApiProperty({ description: '배송 주소', type: ShippingAddressDto })
   shippingAddress: ShippingAddressDto;

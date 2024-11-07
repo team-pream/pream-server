@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Post,
   Request,
@@ -22,6 +23,7 @@ import {
 } from './dto/post-orders.dto';
 import { ERROR_RESPONSE } from '~/errors/error';
 import { PostPaymentsOrderCancelRequestDto } from '../payments/dto/cancel-orders.dto';
+import { GetOrdersResponseDto } from './dto/get-orders.dto';
 
 @ApiTags('Orders')
 @ApiHeader({
@@ -111,6 +113,28 @@ export class OrdersController {
     return this.ordersService.postOrdersOrderConfirm({
       userId,
       orderId,
+    });
+  }
+
+  @ApiOperation({
+    summary: '주문 내역 조회',
+    description: '주문 내역을 조회합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '주문 내역 조회 성공',
+    type: GetOrdersResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Access 토큰이 유효하지 않거나 만료된 사용자',
+    example: ERROR_RESPONSE.INVALID_ACCESS_TOKEN,
+  })
+  @Get()
+  async getOrders(@Request() req: JwtRequest) {
+    const userId = req.user?.id;
+    return this.ordersService.getOrders({
+      userId,
     });
   }
 }
