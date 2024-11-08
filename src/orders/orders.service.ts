@@ -172,8 +172,14 @@ export class OrdersService {
           status: order.product.status,
           images: order.product.images,
         },
-        isCancelable: !isOneWeekOld,
-        isConfirmed: isOneWeekOld,
+        isCancelable:
+          !isOneWeekOld &&
+          order.paymentStatus !== 'CANCELED' &&
+          order.product.status !== 'SOLD_OUT',
+        isConfirmed:
+          isOneWeekOld &&
+          order.paymentStatus !== 'CANCELED' &&
+          order.product.status === 'SOLD_OUT',
         createdAt: order.createdAt,
         updatedAt: order.updatedAt,
       };
