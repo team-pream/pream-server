@@ -45,7 +45,7 @@ export class AuthController {
         schema: {
           type: 'string',
           example:
-            'http://localhost:3000/auth/kakao?access={accessToken}&refresh={refreshToken}&needOnboarding={true|false}',
+            'https://pream.store/auth/kakao?access={accessToken}&refresh={refreshToken}&needOnboarding={true|false}',
         },
       },
     },
