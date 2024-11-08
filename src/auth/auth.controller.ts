@@ -65,7 +65,7 @@ export class AuthController {
       });
 
     res.redirect(
-      `http://localhost:3000/auth/kakao?access=${accessToken}&refresh=${refreshToken}&needOnboarding=${needOnboarding}`,
+      `https://d1zeaqo4cawi81.cloudfront.net/auth/kakao?access=${accessToken}&refresh=${refreshToken}&needOnboarding=${needOnboarding}`,
     );
   }
 
